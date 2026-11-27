@@ -16,6 +16,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      pages_artifact: github-pages-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/blueprint-env
@@ -45,6 +47,11 @@ jobs:
           path: _site
           retention-days: 30
           if-no-files-found: error
+      - name: Upload Pages deployment artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages-${{ github.run_attempt }}
+          path: _site
 
   # Never deploy a private repository to a potentially public Pages site.
   # After public release, explicitly set ENABLE_PUBLIC_PAGES=true to opt in.
@@ -60,14 +67,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: blueprint-website
-          path: _site
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact }}
