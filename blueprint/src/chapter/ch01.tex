@@ -2,7 +2,7 @@
 
 A central open problem in quantum entanglement theory is whether every bipartite state with negative partial transpose (NPT) can be distilled into maximally entangled pairs by local operations and classical communication (LOCC), or whether NPT bound entangled states exist. Following~\cite{Faisal2026}, we develop a general single-copy operator certificate bounding all-copy two-qubit Bell overlap under separable operations, and apply it to the two-qudit Werner state $\rho = (23I - 3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$.
 
-All Hilbert spaces below are finite-dimensional over $\mathbb{C}$; we write $\mathcal{L}(\mathcal{H})$ for linear operators on $\mathcal{H}$, $X^{\dagger}$ for the adjoint, and $X^T$ for the transpose in a fixed computational basis. The general operator-certificate framework, the explicit single-copy certificate for $\rho$, the uniform canonical Bell-overlap cap, and zero finite-round, finite-outcome LOCC distillation rate $E_D(\rho)=0$ are proved below; the full undistillability conclusion (including the all-copy Schmidt-rank-$\le 2$ partial-transpose criterion) remains open here.
+All Hilbert spaces below are finite-dimensional over $\mathbb{C}$; we write $\mathcal{L}(\mathcal{H})$ for linear operators on $\mathcal{H}$, $X^{\dagger}$ for the adjoint, and $X^T$ for the transpose in a fixed computational basis. The general operator-certificate framework, the explicit single-copy certificate for $\rho$, the uniform canonical Bell-overlap cap, zero finite-round, finite-outcome LOCC distillation rate $E_D(\rho)=0$, and finite-copy undistillability in the all-copy Schmidt-rank-$\le 2$ partial-transpose criterion are proved below. Infinite-round or closure LOCC extensions and the stronger arbitrary-filter trace-norm coherence bound are not claimed here.
 
 \section{Symmetric order intervals and reverse-block positivity}
 
@@ -204,6 +204,74 @@ Every finite-round, finite-outcome adaptive bipartite protocol built from outcom
 Induct on the finite adaptive round tree. At each round, the parallel local trace-preserving Kraus instruments have joint Kraus operators factoring across the two parties, and composing with the inductively constructed trace-preserving separable operations on each outcome branch preserves both the product-Kraus form and trace preservation.
 \end{proof}
 
+\section{Finite-copy undistillability and recurrence amplification}
+
+Separately from the finite-round LOCC distillation rate $E_D^{\mathcal{P}}(\sigma)$ of Lemma~\ref{lem:zero}, we consider the finite-copy distillability criterion~\cite{Lewenstein2000Primer} expressed via Schmidt-rank-$\le 2$ witnesses of the partial transpose and local $2\times 2$ projections/filters on $K$ party-major copies.
+
+\begin{definition}[Finite-copy undistillability]
+\label{def:finite-copy-undistillable}
+\lean{QuantumInfo.IsNDistillable, QuantumInfo.IsNUndistillable, QuantumInfo.IsFiniteCopyDistillable, QuantumInfo.IsFiniteCopyUndistillable, QuantumInfo.isFiniteCopyUndistillable_of_partialTransposeFst_posSemidef}
+\leanok
+For a bipartite operator $\sigma$ on $\mathcal{H}_A\otimes\mathcal{H}_B$ and $K\ge 1$, write $(\sigma^{\otimes K})^{\Gamma_A}$ for the partial transpose on Alice's $K$-copy subsystem (in party-major coordinates). We call $\sigma$ \emph{$K$-distillable} if $K>0$ and there exists a vector $\ket{\psi}\in\mathcal{H}_A^{\otimes K}\otimes\mathcal{H}_B^{\otimes K}$ of Schmidt rank at most $2$ such that $\operatorname{Re}\bra{\psi}(\sigma^{\otimes K})^{\Gamma_A}\ket{\psi} < 0$, and \emph{$K$-undistillable} otherwise. We call $\sigma$ \emph{finite-copy distillable} if it is $K$-distillable for some $K\ge 1$, and \emph{finite-copy undistillable} if it is $K$-undistillable for every $K\ge 1$. In particular, every PPT operator ($\sigma^{\Gamma_A}\succeq 0$) is finite-copy undistillable.
+\end{definition}
+
+\begin{lemma}[Two-qubit projection and local filtering criterion]
+\label{lem:two-qubit-filter}
+\lean{QuantumInfo.isNDistillable_iff_dclbTwoTermForm, QuantumInfo.isNDistillable_iff_exists_coisometry_twoQubit_nppt, QuantumInfo.isNDistillable_iff_exists_filter_twoQubit_nppt, NPTEnt.TwoQubitDistillability.not_isPPT_twoQubit_iff_exists_localFilter_normalized_bellOverlap_gt_half, NPTEnt.TwoQubitDistillability.isNDistillable_iff_exists_localFilter_normalized_bellOverlap_gt_half, NPTEnt.TwoQubitDistillability.isFiniteCopyDistillable_iff_exists_localFilter_normalized_bellOverlap_gt_half}
+\leanok
+\uses{def:finite-copy-undistillable}
+Let $\sigma\succeq 0$ on $\mathcal{H}_A\otimes\mathcal{H}_B$ and $K\ge 1$. The following are equivalent:
+\begin{enumerate}
+  \item $\sigma$ is $K$-distillable;
+  \item there exist orthonormal local pairs $\{\ket{e_1},\ket{e_2}\}\subset\mathcal{H}_A^{\otimes K}$ and $\{\ket{f_1},\ket{f_2}\}\subset\mathcal{H}_B^{\otimes K}$ and scalars $a,b\in\mathbb{C}$ such that $\ket{\psi} = a\ket{e_1^*}\ket{f_1} + b\ket{e_2^*}\ket{f_2}$ (where $\ket{e_i^*}$ denotes entrywise complex conjugation) satisfies $\operatorname{Re}\bra{\psi}(\sigma^{\otimes K})^{\Gamma_A}\ket{\psi} < 0$;
+  \item there exist local $2$-dimensional projections/filters $K_A : \mathcal{H}_A^{\otimes K}\to\mathbb{C}^2$ and $K_B : \mathcal{H}_B^{\otimes K}\to\mathbb{C}^2$ such that $(K_A\otimes K_B)\sigma^{\otimes K}(K_A\otimes K_B)^{\dagger}$ is NPT;
+  \item there exist local filters $K_A : \mathcal{H}_A^{\otimes K}\to\mathbb{C}^2$ and $K_B : \mathcal{H}_B^{\otimes K}\to\mathbb{C}^2$ such that $\tau = (K_A\otimes K_B)\sigma^{\otimes K}(K_A\otimes K_B)^{\dagger}$ satisfies $\Tr(\tau) > 0$ and
+  \[
+    \frac{\Tr(\Omega_2\,\tau)}{\Tr(\tau)} > \frac{1}{2}.
+  \]
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+\leanok
+Since $\sigma\succeq 0$, any product vector $\ket{u}\ket{v}$ satisfies $\bra{u,v}(\sigma^{\otimes K})^{\Gamma_A}\ket{u,v} = \bra{u^*,v}\sigma^{\otimes K}\ket{u^*,v}\ge 0$. Hence any negative Schmidt-rank-$\le 2$ witness $\ket{\psi}$ has Schmidt rank $2$, forcing local dimensions at least $2$ and giving the orthonormal two-term representation $\ket{\psi} = a\ket{e_1^*}\ket{f_1} + b\ket{e_2^*}\ket{f_2}$, which yields $(1)\Leftrightarrow(2)$. Pulling back the Alice partial transpose along local $2$-dimensional coisometries/filters identifies such a negative witness with a two-qubit NPT output $\tau_0$, giving $(2)\Leftrightarrow(3)$. On $\mathbb{C}^2\otimes\mathbb{C}^2$, the identity $\operatorname{Re}\Tr(\tau) - 2\Tr(\Omega_2\tau) = \operatorname{Re}\bra{\psi^-}\tau^{\Gamma_A}\ket{\psi^-}$ for $\ket{\psi^-} = \ket{01} - \ket{10}$, combined with an explicit local filter pulling back a negative witness of $\tau_0^{\Gamma_A}$ to $\ket{\psi^-}$, yields a positive-trace two-qubit output with normalized Bell overlap strictly greater than $1/2$. Conversely, any PPT two-qubit operator satisfies $\Tr(\Omega_2\tau)\le \Tr(\tau)/2$, giving $(3)\Leftrightarrow(4)$.
+\end{proof}
+
+\begin{lemma}[Finite isotropic twirl and recurrence amplification]
+\label{lem:recurrence-amplification}
+\lean{NPTEnt.QubitRecurrence.isotropicTwirl12, NPTEnt.QubitRecurrence.isotropicTwirl12_map_of_posSemidef, NPTEnt.QubitRecurrence.recurrenceStep_map_isotropicState2, NPTEnt.RecurrenceAmplification.exists_iterate_qubitRecurrence_gt, NPTEnt.QubitRecurrence.exists_separableOperation_bellFraction_gt, NPTEnt.QubitRecurrence.exists_separableOperation_bellFraction_gt_of_filter}
+\leanok
+\uses{def:sep-op,lem:sep-op-comp}
+Let $\tau\succeq 0$ on $\mathbb{C}^2\otimes\mathbb{C}^2$ satisfy $\Tr(\tau) > 0$ and $\Tr(\Omega_2\tau)/\Tr(\tau) > 1/2$. Then for every $c < 1$, there exist $M\ge 1$ and an unrestricted finite product-Kraus separable operation $\Lambda$ from $(\mathbb{C}^2)^{\otimes M}\otimes(\mathbb{C}^2)^{\otimes M}$ to $\mathbb{C}^2\otimes\mathbb{C}^2$ (not presumed trace-nonincreasing) such that $\Tr(\Lambda(\tau^{\otimes M})) > 0$ and
+\[
+  \frac{\Tr\big(\Omega_2\,\Lambda(\tau^{\otimes M})\big)}{\Tr\big(\Lambda(\tau^{\otimes M})\big)} > c.
+\]
+\end{lemma}
+\begin{proof}
+\leanok
+Composing the $4$-element Pauli twirl with the $3$-element tetrahedral twirl yields a $12$-element product-Kraus separable operation $\mathcal{T}_{12}$ whose algebraic normalization is $12$ times the averaged isotropic twirl; on $\tau$ it outputs $12\Tr(\tau)\,\rho_f$, where $\rho_f = f\Omega_2 + \frac{1-f}{3}(I - \Omega_2)$ and $f = \Tr(\Omega_2\tau)/\Tr(\tau)$. Applying the bilateral even-parity filter $A\otimes A$ ($A\ket{ii}=\ket{i}$, $A\ket{ij}=0$ for $i\neq j$) to $\rho_f^{\otimes 2}$ followed by $\mathcal{T}_{12}$ produces $\frac{2(8f^2-4f+5)}{3}\,\rho_{g(f)}$, where
+\[
+  g(f) = \frac{10f^2 - 2f + 1}{8f^2 - 4f + 5}.
+\]
+On $(1/2, 1)$, the odds $(f - 1/2)/(1 - f)$ increase by at least $6/5$ at each step, while $g(1) = 1$. Iterating this step in a balanced binary tree on $M = 2^n$ copies yields a finite product-Kraus separable operation whose positive-trace output achieves normalized Bell overlap $g^{\circ n}(f) > c$ for sufficiently large $n$.
+\end{proof}
+
+\begin{theorem}[Uniform cap implies finite-copy undistillability]
+\label{thm:cap-undistillable}
+\lean{NPTEnt.TwoQubitDistillability.exists_separableOperation_bellFraction_gt_of_isNDistillable, NPTEnt.TwoQubitDistillability.isFiniteCopyUndistillable_of_uniform_bellOverlap_cap}
+\leanok
+\uses{def:sep-op,lem:sep-op-comp,def:finite-copy-undistillable,lem:two-qubit-filter,lem:recurrence-amplification}
+Let $\sigma\succeq 0$ on $\mathcal{H}_A\otimes\mathcal{H}_B$. Suppose there exists $c < 1$ such that
+\[
+  \Tr\big(\Omega_2\,\Lambda(\sigma^{\otimes M})\big)
+  \le c\,\Tr\big(\Lambda(\sigma^{\otimes M})\big)
+\]
+for every $M\ge 1$ and every finite product-Kraus separable operation $\Lambda$ from $\mathcal{H}_A^{\otimes M}\otimes\mathcal{H}_B^{\otimes M}$ to $\mathbb{C}^2\otimes\mathbb{C}^2$. Then $\sigma$ is finite-copy undistillable.
+\end{theorem}
+\begin{proof}
+\leanok
+Suppose $\sigma$ were $N$-distillable for some $N\ge 1$. By Lemma~\ref{lem:two-qubit-filter}, a single-term product-Kraus filter $S$ maps $\sigma^{\otimes N}$ to a positive-trace two-qubit operator $\tau\succeq 0$ with normalized Bell overlap exceeding $1/2$. Applying Lemma~\ref{lem:recurrence-amplification} with threshold $c$ yields $K\ge 1$ and a finite product-Kraus separable operation $\Lambda_0$ on $K$ copies of $\tau$ exceeding $c$. Tensoring $K$ copies of $S$ with explicit copy regrouping and composing with $\Lambda_0$ gives an unrestricted finite product-Kraus separable operation on $M = KN$ copies of $\sigma$ with positive output trace and normalized Bell overlap strictly exceeding $c$, contradicting the uniform homogeneous cap.
+\end{proof}
+
 \section{The two-qudit Werner state}
 
 A bipartite state is \emph{separable} if it is a convex combination of product states $\sigma_A\otimes\sigma_B$, and \emph{entangled} otherwise. The \emph{partial transpose} $\sigma^{\Gamma}$ transposes the second factor, $(X\otimes Y)^{\Gamma}=X\otimes Y^T$; a state is \emph{PPT} if $\sigma^{\Gamma}\succeq 0$ and \emph{NPT} otherwise.
@@ -280,9 +348,10 @@ Specializing Theorem~\ref{thm:reverse-criterion}, Lemma~\ref{lem:coherence-gener
 
 \begin{lemma}[All-copy reverse-block positivity]
 \label{lem:reverse}
-\notready
+\lean{NPTEnt.Main.CCopies_reverseBlock_posSemidef}
+\leanok
 \uses{lem:maps,lem:certificate,lem:choi-cert,thm:reverse-criterion}
-For every $n\ge 1$ and all $\ket{v},\ket{w}\in(\mathbb{C}^8\otimes\mathbb{C}^8)^{\otimes n}$ with $\ket{v}+\ket{w}=\ket{u_n}$,
+For every $n\ge 0$ and all $\ket{v},\ket{w}\in(\mathbb{C}^8\otimes\mathbb{C}^8)^{\otimes n}$ (in copy-major coordinates, including the empty tensor power $n=0$) with $\ket{v}+\ket{w}=\ket{u_n}$,
 \[
   \Omega_{v,w} =
   \begin{pmatrix}
@@ -292,16 +361,25 @@ For every $n\ge 1$ and all $\ket{v},\ket{w}\in(\mathbb{C}^8\otimes\mathbb{C}^8)^
   \succeq 0.
 \]
 \end{lemma}
+\begin{proof}
+\leanok
+Combine Lemmas~\ref{lem:maps}, \ref{lem:certificate}, and~\ref{lem:choi-cert} with Theorem~\ref{thm:reverse-criterion}.
+\end{proof}
 
 \begin{lemma}[All-copy coherence bound]
 \label{lem:coherence}
-\notready
+\lean{NPTEnt.Main.rankOne_coherence_pow_four_le}
+\leanok
 \uses{lem:reverse,lem:coherence-general}
-For every $n\ge 1$ and all $\ket{a_0},\ket{a_1},\ket{b_0},\ket{b_1}\in(\mathbb{C}^8)^{\otimes n}$ (in party-major coordinates), with $\ket{x_{ij}} = \ket{a_i}\otimes\ket{b_j}$, $p_{ij} = \bra{x_{ij}}\rho^{\otimes n}\ket{x_{ij}}$, and $k = |\bra{x_{00}}\rho^{\otimes n}\ket{x_{11}}|$,
+For every $n\ge 0$ and all $\ket{a_0},\ket{a_1},\ket{b_0},\ket{b_1}\in(\mathbb{C}^8)^{\otimes n}$ (in party-major coordinates, without unit-norm restriction), with $\ket{x_{ij}} = \ket{a_i}\otimes\ket{b_j}$, $p_{ij} = \operatorname{Re}\bra{x_{ij}}\rho^{\otimes n}\ket{x_{ij}}$, and $k = |\bra{x_{00}}\rho^{\otimes n}\ket{x_{11}}|$,
 \[
   k^4 \le p_{00}\,p_{01}\,p_{10}\,p_{11}.
 \]
 \end{lemma}
+\begin{proof}
+\leanok
+Specialize Lemma~\ref{lem:coherence-general} to $\rho = (37\cdot 1448)^{-1}\mathcal{C}(\ketbra{u}{u})$ via Lemmas~\ref{lem:maps}, \ref{lem:certificate}, and~\ref{lem:choi-cert}.
+\end{proof}
 
 \begin{theorem}[Uniform canonical Bell-overlap cap]
 \label{thm:cap}
@@ -330,11 +408,21 @@ The Werner state $\rho=(23I-3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$ is NP
 Since $(1+\sqrt{2})/4 < 1$, combining Lemmas~\ref{lem:state}, \ref{lem:nonseparable}, \ref{lem:locc}, and~\ref{lem:zero} with Theorem~\ref{thm:cap} gives $E_D(\rho)=0$.
 \end{proof}
 
-The checked zero rate in Theorem~\ref{thm:zero-rate} does not yet establish the finite-copy Dür--Cirac--Lewenstein--Bru{\ss} undistillability criterion (positivity of $(\rho^{\otimes N})^{\Gamma}$ on all Schmidt-rank-$\le 2$ vectors for every $N\ge 1$), which remains open pending a finite purification bridge.
+Separately from the finite-round LOCC rate theorem above, the uniform cap of Theorem~\ref{thm:cap} combines with Theorem~\ref{thm:cap-undistillable} to establish the standard Dür--Cirac--Lewenstein--Bru{\ss} finite-copy undistillability criterion for $\rho$.
 
-\begin{theorem}[Undistillability of $\rho$]
+\begin{theorem}[Finite-copy undistillability of $\rho$]
 \label{thm:bound}
-\notready
-\uses{thm:zero-rate}
-The Werner state $\rho=(23I-3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$ is NPT bound entangled and satisfies the all-copy Schmidt-rank-$\le 2$ partial-transpose positivity criterion for every $N\ge 1$.
+\lean{NPTEnt.Main.isFiniteCopyUndistillable_rho, NPTEnt.Main.partialTransposeFst_bipartiteCopies_rho_schmidtRankLE_two_nonneg, NPTEnt.Main.partialTransposeBob_bipartiteCopies_rho_schmidtRankLE_two_nonneg, NPTEnt.Main.npt_finiteCopyUndistillable}
+\leanok
+\uses{lem:state,lem:nonseparable,thm:cap,thm:cap-undistillable}
+The Werner state $\rho=(23I-3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$ is an NPT entangled state that is finite-copy undistillable: for every $N\ge 1$ and every vector $\ket{\psi}\in(\mathbb{C}^8)^{\otimes N}\otimes(\mathbb{C}^8)^{\otimes N}$ of Schmidt rank at most $2$,
+\[
+  \operatorname{Re}\bra{\psi}(\rho^{\otimes N})^{\Gamma_A}\ket{\psi} \ge 0
+  \qquad\text{and}\qquad
+  \operatorname{Re}\bra{\psi}(\rho^{\otimes N})^{\Gamma_B}\ket{\psi} \ge 0.
+\]
 \end{theorem}
+\begin{proof}
+\leanok
+By Lemmas~\ref{lem:state} and~\ref{lem:nonseparable}, $\rho$ is a positive semidefinite, trace-one, NPT entangled state. Applying Theorem~\ref{thm:cap-undistillable} with the uniform Bell-overlap cap $c = (1+\sqrt{2})/4 < 1$ from Theorem~\ref{thm:cap} yields finite-copy undistillability in the Alice partial-transpose convention. Because $\rho = (23I-3F)/1448$ is real symmetric, we have $\rho^{\Gamma_B} = \rho^{\Gamma_A}$ and hence $(\rho^{\otimes N})^{\Gamma_B} = (\rho^{\otimes N})^{\Gamma_A}$ entrywise, so the same inequality holds for the Bob partial transpose.
+\end{proof}

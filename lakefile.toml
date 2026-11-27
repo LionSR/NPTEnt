@@ -9,7 +9,7 @@ weak.linter.mathlibStandardSet = true
 [[require]]
 name = "QICLean"
 git = "https://github.com/LionSR/QICLean.git"
-rev = "6157520a431428b04b585a3e8de4af6aed4c2217"
+rev = "161d69c283c27a7ca4bd4418a353e565f6314c1b"
 
 [[require]]
 name = "mathlib"

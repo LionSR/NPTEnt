@@ -31,22 +31,24 @@ assurance:
    $\alpha_{\min}(d)$ for $d = 8, 9, \dots$, and the large-$d$ scaling
    $\alpha_{\min}(d) \approx -0.43/\sqrt{d}$.
 
-**No bound-entanglement claim is made here.** Computational certificate checks
+**Current status:** the general all-copy overlap and finite-round zero-rate implications are now proved in QICLean. The remaining instance work is the kernel-checked replay and identification of these three additional finite certificates. See [explicit families](example-families.md) for analytic consequences and interpolation families.
+
+**No additional Lean-certified bound-entanglement instance is claimed here.** Computational certificate checks
 are *not* Lean proofs, and they do *not* by themselves prove bound entanglement.
 In the paper's architecture (see `docs/formalization-roadmap.md`), passing
 from a single-copy finite certificate $(L, M, Q)$ to $E_D(\rho) = 0$ requires
 both:
 
-- **Track B (still unformalized in Lean):** the single-copy certificate
+- **Track B (now formalized generically):** the single-copy certificate
   conditions imply $J^{\otimes n} - Q^{\otimes n} \succeq 0$, reverse block
   positivity $\Omega_{v,w} \succeq 0$, the coherence bound
   $K \le (p_{00} p_{01} p_{10} p_{11})^{1/4}$, and the all-copy separable-map
   Bell-overlap cap $(1 + \sqrt{2})/4$.
-- **Track C (still unformalized in Lean):** the operational inclusion of
+- **Track C (now formalized for finite-round, finite-outcome LOCC):** the operational inclusion of
   finite-round LOCC in separable operations and the uniform Bell-overlap cap
   criterion for $E_D(\rho) = 0$.
 
-All three are independently checked NPT states with exact finite certificates. Only their proposed bound-entangled status is conditional on all-copy and operational implications.
+All three are computationally checked NPT states with exact finite certificates. They are not additional kernel-verified instances until their individual finite data have been replayed and identified with the concrete operators in Lean.
 
 ---
 
@@ -220,4 +222,4 @@ Run: `python3 -B scripts/check_additional_certificates.py` (Python 3.10+ standar
 
 **Not independently reproduced:** the general representation reduction and Wolfram sweeps establish no sharp threshold, global infeasibility, certified optimum or asymptotic scaling in this review.
 
-**No bound-entanglement verdict:** no tensor power beyond one, Bell-overlap cap, or operational distillation criterion is checked by the script. Algebraically $J\pm Q\succeq0$ does imply $J^{\otimes n}-Q^{\otimes n}\succeq0$ by expanding products of $J+Q,J-Q$ with an odd number of minus factors. This alone does not supply reverse block positivity, the coherence bound, or the operational implication. Track B/C arguments and their hypotheses need independent validation; “unformalized” does not certify mathematical correctness. The three concrete exact-checked candidates remain useful independently of any bound-entanglement claim.
+**Historical review verdict (before the general framework was formalized):** no tensor power beyond one, Bell-overlap cap, or operational distillation criterion is checked by the script. Algebraically $J\pm Q\succeq0$ does imply $J^{\otimes n}-Q^{\otimes n}\succeq0$ by expanding products of $J+Q,J-Q$ with an odd number of minus factors. This alone does not supply reverse block positivity, the coherence bound, or the operational implication. Track B/C arguments and their hypotheses need independent validation; “unformalized” does not certify mathematical correctness. The three concrete exact-checked candidates remain useful independently of any bound-entanglement claim.

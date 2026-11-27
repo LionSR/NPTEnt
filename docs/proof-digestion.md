@@ -4,6 +4,23 @@ This document digests the proof of Faisal (arXiv:2611.34921v1) into its underlyi
 
 The guiding principle follows the architecture of CertifiedGaps: isolate the broadest natural mathematical mechanism, formalize reusable foundations upstream in QICLean, and instantiate them with self-contained, Lean-checked finite data in NPTEnt. Every accepted final theorem must be self-contained over QICLean and Mathlib, with no unformalized cited theorems and no trusted external numerical oracles.
 
+## Verified integration status
+
+The complete Appendix A certificate, all-copy Bell cap and zero finite-round
+LOCC rate are now Lean-checked in `NPTEnt.Main`. Standard finite-copy definitions
+and the Schmidt-rank-two/filter criterion belong to QICLean. The explicit
+two-qubit filtering construction, finite twirl and recurrence, and the bridge
+from a uniform cap to all-copy undistillability belong to NPTEnt. They prove
+nonnegative partial-transpose expectation on every Schmidt-rank-at-most-two
+vector of every positive number of copies, separately from the rate theorem.
+
+The derivation below records the original proof digestion. Its historical
+“pending” and “not yet Lean-verified” annotations describe the planning stage,
+not the present status of the concrete certificate or the implemented
+rank-one/cap mechanisms. Stronger arbitrary-filter trace-norm inequalities
+and infinite-round/closure extensions are still not claimed. The Gemini 4-authored blueprint records the finite-copy endpoint through the
+local-filter criterion and finite recurrence amplification, separately from rate zero.
+
 ---
 
 ## 1. Architecture of the Proof: Four General Layers + One Concrete Application
@@ -51,7 +68,7 @@ that is, $\bigotimes_{k=1}^n B_k \in \big[-\bigotimes_{k=1}^n A_k,\, \bigotimes_
 - **Cone generality:** The same algebraic identity holds in any partially ordered cone closed under addition, nonnegative scaling, and tensor products—in particular for completely positive linear maps between matrix algebras.
 
 ### Integration status
-The general heterogeneous tensor-domination theorems (`Matrix.kronecker_add_sub_posSemidef`, `Matrix.piKronecker_add_sub_posSemidef`, `Matrix.piKronecker_const_add_sub_posSemidef` in `Analysis.Order.FiniteKroneckerOrder`, covering indefinite $B_k$, heterogeneous finite bases, $n = 0$, and empty spaces with only the three standard axioms) are verified in the upstream QICLean worktree. Because NPTEnt's published downstream pin is unchanged, the corresponding blueprint node (`lem:tensor-interval`) remains `\notready` here with no unavailable declaration links until the upstream revision is published and integrated.
+The general heterogeneous tensor-domination theorems (`Matrix.kronecker_add_sub_posSemidef`, `Matrix.piKronecker_add_sub_posSemidef`, `Matrix.piKronecker_const_add_sub_posSemidef` in `Analysis.Order.FiniteKroneckerOrder`, covering indefinite $B_k$, heterogeneous finite bases, $n = 0$, and empty spaces with only the three standard axioms) are verified in the upstream QICLean worktree. These declarations are available through NPTEnt's published immutable dependency pin. The concrete application and its certificate are now checked downstream.
 
 ---
 
@@ -123,7 +140,7 @@ $$
 ## 4. Layer 3: Local Factorization, Spectral Split, Coherence, and All-Copy Overlap Obstruction
 
 ### Do arbitrary bipartite $\ket{u}$ and rectangular CP local maps suffice?
-**Yes (hand-derived mathematical argument reviewed here; not yet Lean-verified — formalization of the general criterion remains pending).** Let $\mathcal{H}_{A,\mathrm{in}}, \mathcal{H}_{B,\mathrm{in}}, \mathcal{H}_{A,\mathrm{out}}, \mathcal{H}_{B,\mathrm{out}}$ be arbitrary finite-dimensional Hilbert spaces, let
+**Yes for the implemented rank-one/coherence and Bell-cap criterion.** The stronger arbitrary-filter trace-norm formulation below remains outside the accepted endpoint. Let $\mathcal{H}_{A,\mathrm{in}}, \mathcal{H}_{B,\mathrm{in}}, \mathcal{H}_{A,\mathrm{out}}, \mathcal{H}_{B,\mathrm{out}}$ be arbitrary finite-dimensional Hilbert spaces, let
 $$
   L : \mathcal{L}(\mathcal{H}_{A,\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{A,\mathrm{out}}),
   \qquad

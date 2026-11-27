@@ -8,6 +8,22 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 DECLARATIONS = [
+    "NPTEnt.Main.CCopies_reverseBlock_posSemidef",
+    "NPTEnt.Main.rankOne_coherence_pow_four_le",
+    "NPTEnt.Main.isFiniteCopyUndistillable_rho",
+    "NPTEnt.Main.partialTransposeFst_bipartiteCopies_rho_schmidtRankLE_two_nonneg",
+    "NPTEnt.Main.partialTransposeBob_bipartiteCopies_rho_eq_fst",
+    "NPTEnt.Main.partialTransposeBob_bipartiteCopies_rho_schmidtRankLE_two_nonneg",
+    "NPTEnt.Main.npt_finiteCopyUndistillable",
+    "QuantumInfo.isNDistillable_iff_exists_filter_twoQubit_nppt",
+    "QuantumInfo.isFiniteCopyUndistillable_iff_not_isFiniteCopyDistillable",
+    "QuantumInfo.SeparableOperation.map_tensorCopies_bipartiteCopies",
+    "NPTEnt.RecurrenceAmplification.exists_iterate_qubitRecurrence_gt",
+    "NPTEnt.QubitRecurrence.isotropicTwirl12_map",
+    "NPTEnt.QubitRecurrence.recurrenceStep_map_isotropicState2",
+    "NPTEnt.QubitRecurrence.exists_separableOperation_bellFraction_gt_of_filter",
+    "NPTEnt.TwoQubitDistillability.not_isPPT_twoQubit_iff_exists_localFilter_normalized_bellOverlap_gt_half",
+    "NPTEnt.TwoQubitDistillability.isFiniteCopyUndistillable_of_uniform_bellOverlap_cap",
     "NPTEnt.Werner.rho_state_npt",
     "NPTEnt.Certificate.appendixA_certificate",
     "NPTEnt.Main.npt_zero_finiteRoundLOCC_distillableEntanglement",

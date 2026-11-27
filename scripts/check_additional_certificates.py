@@ -6,9 +6,9 @@ Uses Python standard library only (int and fractions.Fraction).
 No floating-point arithmetic, random sampling, or external solver is used.
 
 IMPORTANT: This script performs exact computational finite-certificate checks.
-It is NOT a Lean proof, and it does NOT prove bound entanglement (which
-additionally depends on the unformalized certificate => all-copy overlap bound
-=> zero distillable entanglement chain in Track B / Track C).
+It is NOT a Lean proof. The general certificate-to-overlap and finite-round
+zero-rate mechanisms are proved in QICLean; these additional concrete witnesses
+still require their own kernel-checked replay and instantiation.
 """
 from collections import Counter, defaultdict
 from fractions import Fraction

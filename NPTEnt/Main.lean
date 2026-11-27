@@ -3,6 +3,7 @@ Copyright (c) 2026 The NPTEnt contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The NPTEnt contributors
 -/
+import NPTEnt.TwoQubitDistillability
 import NPTEnt.Werner
 import NPTEnt.LocalMaps
 import NPTEnt.Certificate.Operators
@@ -12,7 +13,7 @@ import QICLean.Channel.Entanglement.BellOverlapBound
 import QICLean.Circuit.Model.Distillation
 
 /-!
-# Main Assembly: Concrete All-Copy Bell-Overlap Cap and Zero Finite-Round LOCC Rate
+# Main Assembly: NPT Finite-Copy Undistillability and Zero Finite-Round LOCC Rate
 
 This file connects the concrete dimension-8 Werner state `Werner.rho`, the local CP maps
 `LocalMaps.L`, `LocalMaps.M`, and `LocalMaps.C = L ⊗ M`, the unconditionally verified
@@ -26,13 +27,17 @@ The main operational results established here for `Werner.rho` are:
    `SeparableOperation` (`bellOverlap_separableOperation_le`,
    `bellOverlap_normalized_separableOperation_le`,
    `bellOverlap_tracePreserving_separableOperation_le`, `hasUniformBellOverlapCap_rho`).
-2. Zero distillable entanglement rate under finite-round, finite-outcome bipartite LOCC
+2. Finite-copy undistillability in the Dür–Cirac–Lewenstein–Bruß Schmidt-rank-at-most-two
+   witness formulation (`isFiniteCopyUndistillable_rho`, `npt_finiteCopyUndistillable`), with
+   explicit nonnegative partial-transpose expectations in both Alice and Bob conventions
+   on every positive copy number.
+3. Zero distillable entanglement rate under finite-round, finite-outcome bipartite LOCC
    (`distillableEntanglement_isBipartiteFiniteRoundLOCC_rho_eq_zero`,
    `npt_zero_finiteRoundLOCC_distillableEntanglement`).
 
-This file does **not** claim the Dür–Cirac–Lewenstein–Bruß $N$-copy rank-$\le 2$ negative
-partial-transpose witness formulation of undistillability (PRA 61, 062313 (2000)), nor any
-closure or infinite-round LOCC extension.
+The finite-copy conclusion uses the proved two-qubit filtering and finite SEP recurrence
+amplification bridge, not an assumed equivalence with positive asymptotic rate. No closure
+or infinite-round LOCC extension is claimed.
 -/
 
 open scoped BigOperators Matrix ComplexOrder MatrixOrder Kronecker
@@ -244,6 +249,42 @@ theorem auxiliaryMapS_spec :
     rectangularChoi_C_add_Q_paired_posSemidef
     rectangularChoi_C_sub_Q_paired_posSemidef hpt hker
 
+/-- Concrete all-copy reverse-block positivity (blueprint `lem:reverse`), in
+copy-major coordinates, including the empty tensor power. -/
+theorem CCopies_reverseBlock_posSemidef
+    (N : ℕ) (v w : (Fin N → Werner.Space) → ℂ)
+    (hvw : v + w = LocalMaps.uCopies N) :
+    (Matrix.fromBlocks
+      (LocalMaps.CCopies N (Matrix.vecMulVec w (star w)))
+      (LocalMaps.CCopies N (Matrix.vecMulVec v (star w)))
+      (LocalMaps.CCopies N (Matrix.vecMulVec w (star v)))
+      (LocalMaps.CCopies N (Matrix.vecMulVec v (star v)))).PosSemidef := by
+  obtain ⟨_, hadd, hsub, hcop, hu⟩ := auxiliaryMapS_spec
+  exact piTensorMap_const_reverseBlock_posSemidef N hadd hsub hcop hu hvw
+
+/-- Concrete rank-one all-copy coherence bound (blueprint `lem:coherence`).
+The party-major index `(x,y)` consists of Alice and Bob copy strings.
+The normalization is exactly `ρ = (37 * 1448)⁻¹ C(|u⟩⟨u|)`.
+No unit-vector or positive-copy-number hypothesis is needed. -/
+theorem rankOne_coherence_pow_four_le
+    (N : ℕ)
+    (a₀ a₁ b₀ b₁ : (Fin N → Fin 8) → ℂ) :
+    let ρN := QuantumInfo.bipartiteCopies N Werner.rho
+    let x00 : (Fin N → Fin 8) × (Fin N → Fin 8) → ℂ := fun (x, y) => a₀ x * b₀ y
+    let x01 : (Fin N → Fin 8) × (Fin N → Fin 8) → ℂ := fun (x, y) => a₀ x * b₁ y
+    let x10 : (Fin N → Fin 8) × (Fin N → Fin 8) → ℂ := fun (x, y) => a₁ x * b₀ y
+    let x11 : (Fin N → Fin 8) × (Fin N → Fin 8) → ℂ := fun (x, y) => a₁ x * b₁ y
+    ‖star x00 ⬝ᵥ ρN *ᵥ x11‖ ^ 4 ≤
+      (star x00 ⬝ᵥ ρN *ᵥ x00).re *
+      (star x01 ⬝ᵥ ρN *ᵥ x01).re *
+      (star x10 ⬝ᵥ ρN *ᵥ x10).re *
+      (star x11 ⬝ᵥ ρN *ᵥ x11).re := by
+  obtain ⟨_, hadd, hsub, hcop, hu⟩ := auxiliaryMapS_spec
+  exact QuantumInfo.rankOne_coherence_pow_four_le_of_smul
+    LocalMaps.L_isKrausCP LocalMaps.M_isKrausCP LocalMaps.C_kronecker
+    hadd hsub hcop hu (by positivity) LocalMaps.rho_eq_real_smul_C_vecMulVec_u
+    N a₀ a₁ b₀ b₁
+
 /-- Unconditional all-copy Bell-overlap bound for `Werner.rho` under any finite product-Kraus
 `SeparableOperation`:
 `maxEntangledOverlap 2 (Λ(ρ^{⊗ N})) ≤ ((1 + √2) / 4) * Re tr(Λ(ρ^{⊗ N}))`. -/
@@ -291,6 +332,65 @@ theorem bellOverlap_tracePreserving_separableOperation_le
 theorem hasUniformBellOverlapCap_rho :
     QuantumCircuit.HasUniformBellOverlapCap Werner.rho ((1 + Real.sqrt 2) / 4) :=
   fun N _ Λ => bellOverlap_separableOperation_le N Λ
+
+/-- The concrete Werner state is undistillable at every finite copy number in the
+Dür–Cirac–Lewenstein–Bruß Schmidt-rank-at-most-two witness formulation. -/
+theorem isFiniteCopyUndistillable_rho :
+    QuantumInfo.IsFiniteCopyUndistillable Werner.rho := by
+  apply TwoQubitDistillability.isFiniteCopyUndistillable_of_uniform_bellOverlap_cap
+    Werner.rho_posSemidef (c := (1 + Real.sqrt 2) / 4)
+  · nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num),
+      Real.sqrt_nonneg (2 : ℝ)]
+  · exact hasUniformBellOverlapCap_rho
+
+/-- Every Schmidt-rank-at-most-two vector has nonnegative expectation on the Alice
+partial transpose of every positive tensor power of the Werner state (party-major basis).
+No unit-norm restriction on the vector is needed. -/
+theorem partialTransposeFst_bipartiteCopies_rho_schmidtRankLE_two_nonneg
+    (N : ℕ) (_hN : 0 < N)
+    (ψ : (Fin N → Fin 8) × (Fin N → Fin 8) → ℂ)
+    (hψ : Matrix.HasSchmidtRankLE 2 ψ) :
+    0 ≤ (star ψ ⬝ᵥ
+      Matrix.partialTransposeFst (QuantumInfo.bipartiteCopies N Werner.rho) *ᵥ ψ).re :=
+  isFiniteCopyUndistillable_rho N ψ hψ
+
+/-- For this real symmetric Werner state, Alice and Bob partial transposes agree on
+all copies. Bob's transpose is expressed by its entry formula, valid on the arbitrary
+function bases used for party-major copies. -/
+theorem partialTransposeBob_bipartiteCopies_rho_eq_fst (N : ℕ) :
+    (fun p q : (Fin N → Fin 8) × (Fin N → Fin 8) =>
+      QuantumInfo.bipartiteCopies N Werner.rho (p.1, q.2) (q.1, p.2)) =
+    Matrix.partialTransposeFst (QuantumInfo.bipartiteCopies N Werner.rho) := by
+  ext ⟨a, b⟩ ⟨c, d⟩
+  simp only [Matrix.partialTransposeFst_apply, QuantumInfo.bipartiteCopies_apply]
+  apply Finset.prod_congr rfl
+  intro i _
+  simp [Werner.rho, Matrix.smul_apply, Matrix.sub_apply, Matrix.one_apply,
+    swapMatrix_apply, Prod.ext_iff, eq_comm, and_comm]
+
+/-- Every Schmidt-rank-at-most-two vector has nonnegative expectation on the Bob
+partial transpose of every positive tensor power of the Werner state. The displayed
+entry formula transposes Bob without reindexing the function bases to finite ordinals. -/
+theorem partialTransposeBob_bipartiteCopies_rho_schmidtRankLE_two_nonneg
+    (N : ℕ) (hN : 0 < N)
+    (ψ : (Fin N → Fin 8) × (Fin N → Fin 8) → ℂ)
+    (hψ : Matrix.HasSchmidtRankLE 2 ψ) :
+    0 ≤ (star ψ ⬝ᵥ
+      (fun p q => QuantumInfo.bipartiteCopies N Werner.rho (p.1, q.2) (q.1, p.2)) *ᵥ ψ).re := by
+  rw [partialTransposeBob_bipartiteCopies_rho_eq_fst]
+  exact partialTransposeFst_bipartiteCopies_rho_schmidtRankLE_two_nonneg N hN ψ hψ
+
+/-- The concrete dimension-eight Werner state is a trace-one positive semidefinite,
+NPT entangled state undistillable at every finite copy number. -/
+theorem npt_finiteCopyUndistillable :
+    Werner.rho.PosSemidef ∧
+    Werner.rho.trace = 1 ∧
+    ¬ (partialTransposeRight Werner.rho).PosSemidef ∧
+    ¬ Matrix.IsSeparable Werner.rho ∧
+    QuantumInfo.IsFiniteCopyUndistillable Werner.rho :=
+  ⟨Werner.rho_posSemidef, Werner.trace_rho,
+    Werner.rho_not_posSemidef_partialTransposeRight, Werner.rho_not_isSeparable,
+    isFiniteCopyUndistillable_rho⟩
 
 /-- Unconditional zero distillable entanglement rate for `Werner.rho` under finite-round,
 finite-outcome bipartite LOCC. -/

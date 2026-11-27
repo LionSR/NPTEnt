@@ -6,8 +6,11 @@ review branch is [feature/nptent-foundations](https://github.com/LionSR/QICLean/
 with [draft PR #1245](https://github.com/LionSR/QICLean/pull/1245). It is not
 merged into QICLean main.
 
-NPTEnt uses a published immutable QICLean commit recorded in lakefile.toml and
-lake-manifest.json. There is no absolute path dependency. The temporary
+NPTEnt uses published immutable QICLean commit
+`161d69c283c27a7ca4bd4418a353e565f6314c1b`, recorded in lakefile.toml and
+lake-manifest.json. This extends the previous `6157520a` checkpoint with only
+standard finite-copy criteria and reusable tensor operations (plus their
+upstream import manifest and documentation). There is no absolute path dependency. The temporary
 NPTEnt/Quantum implementation has been removed; generic development must not
 reintroduce duplicate declarations downstream.
 
@@ -16,7 +19,13 @@ reintroduce duplicate declarations downstream.
 QICLean owns tensor stability of symmetric order intervals, auxiliary-map and
 Choi-certificate criteria, the two-form spectral split, coherence and overlap
 inequalities, separable operations, finite-round LOCC and operational
-distillation. A general criterion has explicit natural hypotheses. Its
+distillation. It also owns the standard finite-copy distillability definitions,
+Schmidt-rank-two/filter criterion and reusable separable-operation tensor and
+copy-regrouping operations. The explicit two-qubit NPT-to-filtered-Bell construction,
+12-element twirl, parity-filter recurrence, finite amplification and uniform-cap
+to finite-copy-undistillability bridge live downstream in
+`NPTEnt.TwoQubitDistillability`, `NPTEnt.QubitRecurrence` and
+`NPTEnt.RecurrenceAmplification`. These are not duplicated in `NPTEnt/Quantum`. A general criterion has explicit natural hypotheses. Its
 existence does not establish the concrete certificate: the application must
 discharge phase support, symmetry transport, finite positivity and the kernel
 identity with checked proofs. Consult the blueprint for current coverage.

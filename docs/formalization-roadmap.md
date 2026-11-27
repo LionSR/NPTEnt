@@ -2,7 +2,7 @@
 
 ## Target and status
 
-The source is Islam Faisal, *Bound Entanglement with Negative Partial Transpose Exists*, arXiv:2611.34921v1 (submitted 25 November 2026). The target state is rho = (23 I - 3 SWAP)/1448 on C^8 tensor C^8. The principal claimed bound is that every nonzero two-qubit output of a product-Kraus CP map on any number of copies has normalized Bell overlap at most (1 + sqrt(2))/4. Neither that bound nor its operational consequences are assumed here.
+The source is Islam Faisal, *Bound Entanglement with Negative Partial Transpose Exists*, arXiv:2611.34921v1 (submitted 25 November 2026). The target state is rho = (23 I - 3 SWAP)/1448 on C^8 tensor C^8. The principal claimed bound is that every nonzero two-qubit output of a product-Kraus CP map on any number of copies has normalized Bell overlap at most (1 + sqrt(2))/4. That bound and zero finite-round LOCC rate are proved unconditionally in `NPTEnt.Main`, using the Lean-checked complete certificate. Finite-copy undistillability is obtained separately through explicit two-qubit filtering and finite recurrence amplification; it is not inferred merely from rate zero.
 
 ## Track A: exact certificate
 
@@ -12,7 +12,7 @@ The source is Islam Faisal, *Bound Entanglement with Negative Partial Transpose 
 4. Prove symmetry, entry support, complete partition of all 4096 coordinates, and transport from representative blocks. The largest listed block is 42 by 42.
 5. Check (J-Q)(u tensor I)=0 exactly. Handle zero pivots with an actual LDL or Gram identity; nonnegative elimination pivots alone are not the checker interface.
 
-The initial discussion reported earlier exact integer checks without supplying their artifacts. The certificate has now been independently reconstructed in scripts/check_certificate.py: all four conditions pass full-basis exact checks; see docs/certificate-check.md. This is computational evidence, not Lean verification. Next export rational witnesses and formalize their identities and full block coverage. Generated data are separate from handwritten-code estimates; no time or line-count estimate is a proof milestone.
+The initial discussion reported earlier exact integer checks without supplying their artifacts. The certificate has now been independently reconstructed in scripts/check_certificate.py: all four conditions pass full-basis exact checks; see docs/certificate-check.md. That script is independent computational evidence. The exported rational witnesses, identities, complete symmetry coverage and kernel equation are now checked in Lean by `NPTEnt.Certificate.appendixA_certificate`. Generated data are separate from handwritten-code estimates; no time or line-count estimate is a proof milestone.
 
 ## Track B: certificate implies all-copy overlap bound
 
