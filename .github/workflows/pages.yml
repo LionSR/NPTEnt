@@ -1,0 +1,73 @@
+name: Blueprint and Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blueprint-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/blueprint-env
+      - name: Generate bibliography
+        run: texra-blueprint bbl
+      - name: Build blueprint web and PDF
+        working-directory: blueprint
+        run: |
+          texra-blueprint web
+          leanblueprint pdf
+      - name: Build paper-gap notes and index
+        run: |
+          texra-blueprint paper-gaps check
+          texra-blueprint paper-gaps build
+          texra-blueprint paper-gaps site _site/paper-gaps
+      - name: Assemble website
+        run: |
+          mkdir -p _site
+          cp -r blueprint/web _site/blueprint
+          cp blueprint/print/print.pdf _site/blueprint.pdf
+          python3 scripts/write_badges.py _site/badges
+          cp home_page/index.html _site/index.html
+      - name: Upload website and PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blueprint-website
+          path: _site
+          retention-days: 30
+          if-no-files-found: error
+
+  # Never deploy a private repository to a potentially public Pages site.
+  # After public release, explicitly set ENABLE_PUBLIC_PAGES=true to opt in.
+  deploy:
+    if: github.event_name != 'pull_request' && github.event.repository.private == false && vars.ENABLE_PUBLIC_PAGES == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: blueprint-website
+          path: _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

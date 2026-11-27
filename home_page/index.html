@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NPT Bound Entanglement (NPTEnt)</title>
+  <meta name="description" content="Lean 4 formalization effort investigating Islam Faisal's arXiv:2611.34921v1 on NPT bound entanglement, built over QICLean and Mathlib.">
+  <link rel="canonical" href="https://sirui-lu.com/NPTEnt/">
+  <style>
+    :root {
+      --bg: #fffff8; --ink: #141413; --mute: #64645e;
+      --line: #dad7c8; --wash: #f5f3e8; --accent: #2c557d;
+      --serif: Palatino, "Palatino Linotype", "Book Antiqua", "Iowan Old Style", Georgia, serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #151514; --ink: #e0dfd8; --mute: #9a9990;
+        --line: #363632; --wash: #1e1e1c; --accent: #86b0d9;
+        color-scheme: dark;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.6 var(--serif); font-variant-numeric: oldstyle-nums; }
+    .wrap { max-width: 46rem; margin: 0 auto; padding: 0 max(1.1rem, env(safe-area-inset-left, 0px)); }
+    header {
+      display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+      gap: 0.4rem 1.4rem; padding: 1.4rem 0 0.65rem; border-bottom: 1px solid var(--line);
+    }
+    .brand { font-variant: small-caps; letter-spacing: 0.08em; font-size: 1.05rem; color: var(--ink); text-decoration: none; }
+    nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.15rem; font-size: 0.94rem; }
+    nav a { color: var(--mute); text-decoration: none; }
+    nav a:hover { color: var(--accent); }
+    main { padding: 2.5rem 0 3rem; }
+    h1 { font-weight: 400; font-size: clamp(1.85rem, 4.6vw, 2.5rem); line-height: 1.16; margin: 0 0 1.35rem; }
+    h1 .abbr { color: var(--mute); font-size: 0.72em; }
+    h2 { font-weight: 400; font-style: italic; font-size: 1.4rem; line-height: 1.25; margin: 2.4rem 0 0.7rem; }
+    p, li { max-width: 38em; }
+    p { margin: 0 0 0.95em; }
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--line); }
+    a:hover { text-decoration-color: var(--accent); }
+    a:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+    .eq {
+      margin: 1.4rem 0; padding: 0.95rem 1.2rem; background: var(--wash);
+      border-left: 2px solid var(--accent); max-width: 38em;
+      font-size: 1.06rem; font-variant-numeric: lining-nums; overflow-x: auto;
+    }
+    .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 0.22em; font-size: 0.92em; line-height: 1.15; }
+    .frac .num { border-bottom: 1px solid currentColor; padding: 0 0.25em 0.1em; }
+    .frac .den { padding-top: 0.1em; }
+    .where { margin-left: 0.9em; color: var(--mute); font-size: 0.95em; }
+    .table-wrap { overflow-x: auto; margin: 0 0 1.1rem; }
+    table {
+      width: 100%; max-width: 42rem; border-collapse: collapse; font-size: 0.94rem;
+      font-variant-numeric: lining-nums; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+    }
+    th, td { padding: 0.45rem 1rem 0.45rem 0; text-align: left; vertical-align: baseline; }
+    th:last-child, td:last-child { padding-right: 0; }
+    thead th { font-weight: 400; font-style: italic; color: var(--mute); border-bottom: 1px solid var(--line); }
+    .state { white-space: nowrap; font-variant: small-caps; letter-spacing: 0.03em; }
+    .done { color: var(--accent); }
+    .open { color: var(--mute); }
+    ul.links { list-style: none; padding: 0; margin: 0; }
+    ul.links li { margin: 0.45rem 0; }
+    .label { color: var(--mute); display: inline-block; min-width: 7.2rem; }
+    footer { border-top: 1px solid var(--line); padding: 1rem 0 2.2rem; font-size: 0.88rem; color: var(--mute); }
+    @media (max-width: 560px) {
+      body { font-size: 17px; }
+      main { padding-top: 1.8rem; }
+      .label { display: block; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="./">NPTEnt</a>
+      <nav aria-label="Primary">
+        <a href="blueprint/">Blueprint</a>
+        <a href="blueprint/dep_graph_document.html">Dependency graph</a>
+        <a href="blueprint.pdf">PDF</a>
+        <a href="paper-gaps/">Paper gaps</a>
+        <a href="https://github.com/LionSR/NPTEnt">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>NPT Bound Entanglement <span class="abbr">(NPTEnt)</span></h1>
+      <p>
+        NPTEnt is a Lean&nbsp;4 investigation of Islam Faisal&rsquo;s preprint
+        <em><a href="https://arxiv.org/abs/2611.34921v1">Bound Entanglement with Negative Partial Transpose Exists</a></em>
+        (arXiv:2611.34921v1, 2026). The central question is whether there exists a bipartite
+        quantum state with negative partial transpose (NPT) that cannot be distilled into
+        maximally entangled pairs by local operations and classical communication.
+      </p>
+      <p>
+        The preprint proposes a single-copy operator certificate aimed at bounding the all-copy
+        two-qubit Bell overlap under separable operations for the two-qudit Werner state
+      </p>
+      <div class="eq" role="math" aria-label="rho equals (23 I minus 3 F) over 1448 on C^8 tensor C^8">
+        <i>&rho;</i> = <span class="frac"><span class="num">23<i>I</i> &minus; 3<i>F</i></span><span class="den">1448</span></span>
+        <span class="where">on &#x2102;<sup>8</sup> &otimes; &#x2102;<sup>8</sup>,</span>
+      </div>
+      <p>
+        where <i>F</i> denotes the swap operator. Reusable quantum-information foundations for
+        this work are being developed upstream in <a href="https://github.com/LionSR/QICLean">QICLean</a>,
+        while paper-specific states and finite witness data remain in NPTEnt.
+      </p>
+
+      <h2>Status</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Component</th><th>Verification</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Explicit Werner state <i>&rho;</i> (positive semidefinite, unit trace, NPT, nonseparable)</td>
+              <td class="state done">Lean 4 verified</td>
+            </tr>
+            <tr>
+              <td>Finite single-copy certificate</td>
+              <td class="state open">Exact Python check only</td>
+            </tr>
+            <tr>
+              <td>All-copy Bell-overlap bound &amp; bound-entanglement conclusion</td>
+              <td class="state open">Not yet proved</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The main bound-entanglement claim is not yet formalized here; declaration counts are not
+        a measure of completion. Consult the <a href="blueprint/">blueprint</a> and
+        <a href="paper-gaps/">paper-gap notes</a> for current mathematical coverage and open steps.
+      </p>
+
+      <h2>Links</h2>
+      <ul class="links">
+        <li><span class="label">Blueprint</span><a href="blueprint/">Web exposition</a> &middot; <a href="blueprint/dep_graph_document.html">Dependency graph</a> &middot; <a href="blueprint.pdf">PDF</a></li>
+        <li><span class="label">Notes</span><a href="paper-gaps/">Paper-gap notes</a></li>
+        <li><span class="label">Source code</span><a href="https://github.com/LionSR/NPTEnt">LionSR/NPTEnt</a> &middot; <a href="https://github.com/LionSR/QICLean">LionSR/QICLean</a></li>
+        <li><span class="label">Paper</span>Islam Faisal, <em>Bound Entanglement with Negative Partial Transpose Exists</em>, <a href="https://arxiv.org/abs/2611.34921v1">arXiv:2611.34921v1</a> (2026)</li>
+      </ul>
+    </main>
+
+    <footer>
+      Lean&nbsp;4 formalization over <a href="https://github.com/LionSR/QICLean">QICLean</a> and Mathlib &middot;
+      <a href="https://github.com/LionSR/NPTEnt">github.com/LionSR/NPTEnt</a>
+    </footer>
+  </div>
+</body>
+</html>

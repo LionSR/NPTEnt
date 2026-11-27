@@ -1,0 +1,20 @@
+name = "NPTEnt"
+defaultTargets = ["NPTEnt"]
+
+[leanOptions]
+relaxedAutoImplicit = false
+pp.unicode.fun = true
+weak.linter.mathlibStandardSet = true
+
+[[require]]
+name = "QICLean"
+git = "https://github.com/LionSR/QICLean.git"
+rev = "34a20d6e661cc365a6373984a132e5b4338a34e2"
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.36.0-rc1"
+
+[[lean_lib]]
+name = "NPTEnt"

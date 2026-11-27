@@ -1,0 +1,14 @@
+# Recorded by copier: the answers and template version this instance
+# was rendered from. Do not edit by hand.
+_commit: b7b50d1
+_src_path: gh:LionSR/oh-my-formalization
+author_name: The NPTEnt contributors
+main_source: Islam Faisal, Bound Entanglement with Negative Partial Transpose Exists,
+    arXiv:2611.34921 (2026)
+project_description: Formal verification of an NPT bound-entanglement claim using
+    reusable QICLean foundations.
+project_name: NPTEnt
+project_title: NPT Bound Entanglement
+repo_slug: LionSR/NPTEnt
+site_url: https://LionSR.github.io/NPTEnt
+source_key: f26

@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Lean and Mathlib cache
+        uses: texra-ai/lean-env-action@v1
+      - name: Build
+        run: lake build
+      - name: Test verification guards
+        run: python3 scripts/test_verification_guards.py
+      - name: Reject unfinished proofs and new axioms
+        run: python3 scripts/check_no_admissions.py
+      - name: Audit theorem axiom dependencies
+        run: python3 scripts/check_axioms.py
+      - name: Fetch pinned paper source
+        run: python3 scripts/fetch_source.py
+      - name: Reproduce exact finite certificate checks
+        run: python3 -B scripts/check_certificate.py
+      - name: Check additional candidate certificates
+        run: python3 -B scripts/check_additional_certificates.py
+      - uses: ./.github/actions/blueprint-env
+      - name: Generate bibliography and declaration index
+        run: |
+          texra-blueprint bbl
+          (cd blueprint && texra-blueprint web)
+      - name: Check declaration links
+        working-directory: blueprint
+        run: leanblueprint checkdecls
+
+  blueprint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/blueprint-env
+      - name: Check paper-gap references and source keys
+        run: texra-blueprint paper-gaps check
+      - name: Generate blueprint bibliography
+        run: texra-blueprint bbl
+      - name: Build blueprint web
+        working-directory: blueprint
+        run: texra-blueprint web
+      - name: Build blueprint PDF
+        working-directory: blueprint
+        run: leanblueprint pdf
