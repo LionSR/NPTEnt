@@ -2,7 +2,7 @@
 
 ## Dependencies and ownership
 
-Use the exact QICLean revision in lakefile.toml and its Lean/Mathlib version. Do not mutate another project checkout to make this build pass. General theory is developed in the dedicated QICLean worktree on feature/nptent-operations. NPTEnt/Quantum/ retains only the staging copy needed by the current published dependency pin; remove it when advancing that pin to the integrated upstream revision. Paper-specific constants and witnesses stay under NPTEnt. Use narrow imports, not the QICLean umbrella.
+Use the exact QICLean revision in lakefile.toml and its Lean/Mathlib version. Do not mutate another project checkout to make this build pass. General theory is developed in a dedicated QICLean worktree and reviewed snapshots are published on feature/nptent-foundations. NPTEnt consumes an immutable published commit; the temporary NPTEnt/Quantum staging copy has been removed and must not be reintroduced. Paper-specific constants and witnesses stay under NPTEnt. Use narrow imports, not the QICLean umbrella.
 
 ## Generality and self-contained proofs
 

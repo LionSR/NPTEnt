@@ -7,6 +7,31 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
+DECLARATIONS = [
+    "NPTEnt.Werner.rho_state_npt",
+    "NPTEnt.Certificate.appendixA_certificate",
+    "NPTEnt.Main.npt_zero_finiteRoundLOCC_distillableEntanglement",
+    "NPTEnt.Main.bellOverlap_normalized_separableOperation_le",
+    "NPTEnt.Main.rectangularChoi_C_add_Q_paired_posSemidef",
+    "NPTEnt.Main.rectangularChoi_C_sub_Q_paired_mul_uTensorI_paired",
+    "QuantumInfo.rankOne_coherence_pow_four_le",
+    "QuantumInfo.bellOverlap_separableOperation_le",
+    "piTensorMap_const_reverseBlock_posSemidef_of_choiCertificate_compression",
+    "NPTEnt.Werner.rho_not_isSeparable",
+    "QuantumInfo.SeparableOperation.isKrausCP_map",
+    "QuantumInfo.SeparableOperation.map_comp_eq",
+    "Matrix.piKronecker_add_sub_posSemidef",
+    "reverseBlock_posSemidef",
+    "piTensorMap_const_reverseBlock_posSemidef",
+    "Matrix.exists_twoForms_bipartite_split",
+    "Matrix.maxEntangledOverlap_le_one_div_of_isPPT",
+    "Matrix.abs_maxEntangledOverlap_sub_le",
+    "QuantumCircuit.IsFiniteRoundLOCC.exists_separableOperation",
+    "QuantumCircuit.distillableEntanglement_eq_zero_of_uniformBellOverlapCap",
+    "QuantumCircuit.isAchievableDistillationRate_iff_tendsto_minDistillationError",
+    "QICLean.posSemidef_complex_of_checkLDLPairIntBool",
+    "Matrix.posSemidef_of_global_orbit_transport",
+]
 
 
 def check_output(output: str) -> None:
@@ -21,9 +46,13 @@ def check_output(output: str) -> None:
 
 
 def main() -> int:
-    run = subprocess.run(["lake", "env", "lean", "scripts/AxiomAudit.lean"],
-                         cwd=ROOT, text=True, stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
+    # Audit the compiled public interface through stdin, without committing
+    # a standalone Lean fixture or an expected-output transcript.
+    source = "import NPTEnt\n" + "\n".join(
+        f"#print axioms {name}" for name in DECLARATIONS) + "\n"
+    run = subprocess.run(["lake", "env", "lean", "--stdin"],
+                         input=source, cwd=ROOT, text=True,
+                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     print(run.stdout, end="")
     if run.returncode:
         return run.returncode

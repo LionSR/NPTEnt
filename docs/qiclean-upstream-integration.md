@@ -1,31 +1,44 @@
-# QICLean upstream integration
+# QICLean integration
 
-## Ownership
+General entanglement theory belongs in QICLean; NPTEnt contains the explicit
+state, local maps, certificate data and their mathematical application. The
+review branch is [feature/nptent-foundations](https://github.com/LionSR/QICLean/tree/feature/nptent-foundations),
+with [draft PR #1245](https://github.com/LionSR/QICLean/pull/1245). It is not
+merged into QICLean main.
 
-General separable operations, local protocols, PPT preservation, and distillation theory belong to QICLean. So do the proof mechanisms extracted from the source: tensor stability of two-sided matrix domination, auxiliary-map criteria for reverse block positivity, and reusable spectral/coherence inequalities. The goal is a general theory with explicit instances, not a literal translation of the dimension-eight example. The mathematical argument must be self-contained over QICLean and Mathlib; CertifiedGaps is an architectural reference, not an additional dependency. NPTEnt owns only the explicit state, its maps/certificate, and applications of the general results. The development branch is `feature/nptent-operations`, based on QICLean commit `34a20d6e661cc365a6373984a132e5b4338a34e2`. Its isolated checkout is `../QICLean/worktrees/nptent-operations`. The active sibling checkout is not switched or edited.
+NPTEnt uses a published immutable QICLean commit recorded in lakefile.toml and
+lake-manifest.json. There is no absolute path dependency. The temporary
+NPTEnt/Quantum implementation has been removed; generic development must not
+reintroduce duplicate declarations downstream.
 
-The first migrated module is `QICLean.Channel.Entanglement.SeparableOperation`; its declarations retain the paper-independent namespace `QuantumInfo.SeparableOperation`. This keeps mathematical statements and declaration links stable while changing module ownership.
+## Mathematical boundary
 
-## Proof-digestion refinements
+QICLean owns tensor stability of symmetric order intervals, auxiliary-map and
+Choi-certificate criteria, the two-form spectral split, coherence and overlap
+inequalities, separable operations, finite-round LOCC and operational
+distillation. A general criterion has explicit natural hypotheses. Its
+existence does not establish the concrete certificate: the application must
+discharge phase support, symmetry transport, finite positivity and the kernel
+identity with checked proofs. Consult the blueprint for current coverage.
 
-The upstream general criterion should not inherit avoidable complications of the source proof. The following are mathematical routes to formalize, not assertions of completed Lean results:
+External programs may discover rational witnesses. The accepted mathematical
+argument is self-contained over QICLean and Mathlib; numerical output is not a
+proof assumption. CertifiedGaps is a methodological reference, not a dependency.
 
-- Tensor stability should cover heterogeneous factors: A_i plus or minus B_i positive semidefinite implies the tensor products of A_i plus or minus the tensor products of B_i are positive semidefinite. No positivity of B_i is assumed.
-- If a CP map D annihilates uu*, its Kraus representation gives K_i u = 0 for every i (take the trace and use the sum of squared norms). Thus D annihilates zu* and uz* for every z. For D=C-S, agreement on uu* can replace explicit agreement on every off-diagonal rank-one matrix in the criterion.
-- Keep Choi conventions separate: Matrix.rectangularChoi is unnormalized and input-first; ChoiRectangular.choiMatrix is normalized and output-first. For complex u, the input-first kernel vector is conjugate(u) tensor y, not u tensor y.
-- Prove the final overlap cap in homogeneous form, Bell overlap of tau <= c times trace(tau), including zero output. Kraus sums then inherit the final cap directly by linearity; a separate Cauchy--Schwarz sum bound is only needed if retaining the stronger coherence theorem.
-- The homogeneous bound is also continuous as a function of the channel for a fixed input. This gives a route to closure extensions without dividing by small postselection probabilities. The precise LOCC class and extension still need explicit proofs.
+## API cleanup
 
-## Dependency discipline
+The integration reuses original library laws rather than keeping aliases:
 
-NPTEnt currently pins the published base commit. Until the new QICLean changes are published, the staging module `NPTEnt/Quantum/SeparableOperation.lean` remains necessary for a fresh downstream checkout to build. It is not the long-term owner, and should not receive independent development. New generic lemmas are developed upstream. Do not replace the canonical dependency with an absolute path or pin a commit unavailable at its configured URL.
+| Former staging alias | Replacement |
+| --- | --- |
+| QuantumInfo.SeparableOperation.IsTP.isTraceNonincreasing | KrausFamily.IsTP.isTraceNonincreasing |
+| QuantumInfo.SeparableOperation.trace_map | KrausFamily.trace_map on S.toKrausFamily |
+| QuantumInfo.SeparableOperation.trace_map_le | KrausFamily.trace_map_le on S.toKrausFamily |
+| QuantumCircuit.IsFiniteRoundLOCC.id | QuantumCircuit.IsAdaptiveProtocol.id |
+| QuantumCircuit.IsFiniteRoundLOCC.comp | QuantumCircuit.IsAdaptiveProtocol.comp |
+| QuantumCircuit.IsFiniteRoundLOCC.isKrausCPTP | QuantumCircuit.IsAdaptiveProtocol.isKrausCPTP |
 
-After upstream review and publication:
-
-1. Advance the QICLean revision in lakefile.toml to the published commit, keeping Lean/Mathlib aligned.
-2. Replace the downstream root import of NPTEnt.Quantum.SeparableOperation with QICLean.Channel.Entanglement.SeparableOperation (and needed preservation modules).
-3. Remove the staging module rather than retaining duplicate declarations or a second implementation.
-4. Update lake-manifest.json, fetch Mathlib cache, build, and run the strict axiom audits and regression checks.
-5. Have Gemini 4 update any affected blueprint metadata, then rebuild web/PDF and check declaration links.
-
-No remote push or merge is implicit in preparing the upstream worktree.
+Current QICLean policy excludes committed Lean test fixtures. Check sources
+and axioms during development using ignored scratch files or stdin, then
+remove diagnostic commands before committing. Concrete certificate theorems
+are mathematical results and belong in NPTEnt production modules.

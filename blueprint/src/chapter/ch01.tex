@@ -2,36 +2,46 @@
 
 A central open problem in quantum entanglement theory is whether every bipartite state with negative partial transpose (NPT) can be distilled into maximally entangled pairs by local operations and classical communication (LOCC), or whether NPT bound entangled states exist. Following~\cite{Faisal2026}, we develop a general single-copy operator certificate bounding all-copy two-qubit Bell overlap under separable operations, and apply it to the two-qudit Werner state $\rho = (23I - 3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$.
 
-All Hilbert spaces below are finite-dimensional over $\mathbb{C}$; we write $\mathcal{L}(\mathcal{H})$ for linear operators on $\mathcal{H}$, $X^{\dagger}$ for the adjoint, and $X^T$ for the transpose in a fixed computational basis. The elementary properties of $\rho$ and basic separable-operation calculus are proved below; the remaining claims of~\cite{Faisal2026} are under investigation and remain unverified here.
+All Hilbert spaces below are finite-dimensional over $\mathbb{C}$; we write $\mathcal{L}(\mathcal{H})$ for linear operators on $\mathcal{H}$, $X^{\dagger}$ for the adjoint, and $X^T$ for the transpose in a fixed computational basis. The general operator-certificate framework, the explicit single-copy certificate for $\rho$, the uniform canonical Bell-overlap cap, and zero finite-round, finite-outcome LOCC distillation rate $E_D(\rho)=0$ are proved below; the full undistillability conclusion (including the all-copy Schmidt-rank-$\le 2$ partial-transpose criterion) remains open here.
 
 \section{Symmetric order intervals and reverse-block positivity}
 
 \begin{lemma}[Tensor stability of order intervals]
 \label{lem:tensor-interval}
-\notready
+\lean{Matrix.piKronecker_add_sub_posSemidef}
+\leanok
 Let $n\ge 0$, and for each $k\in\{1,\dots,n\}$ let $A_k, B_k\in\mathcal{L}(\mathcal{H}_k)$ satisfy
 \[
   A_k + B_k \succeq 0 \qquad\text{and}\qquad A_k - B_k \succeq 0.
 \]
 Then $A = \bigotimes_{k=1}^n A_k$ and $B = \bigotimes_{k=1}^n B_k$ satisfy $A + B \succeq 0$ and $A - B \succeq 0$ (with the empty product for $n=0$ equal to $1$ on $\mathbb{C}$).
 \end{lemma}
-
-The identities
+\begin{proof}
+\leanok
+Induct on $n$. For $n=0$, $A=B=1$, so $A+B=2\succeq 0$ and $A-B=0\succeq 0$. The inductive step follows from the identities
 \[
   A_1\otimes A_2 \pm B_1\otimes B_2
-  = \tfrac{1}{2}\big((A_1+B_1)\otimes(A_2\pm B_2) + (A_1-B_1)\otimes(A_2\mp B_2)\big)
+  = \tfrac{1}{2}\big((A_1+B_1)\otimes(A_2\pm B_2) + (A_1-B_1)\otimes(A_2\mp B_2)\big),
 \]
-yield the same stability for completely positive maps, i.e., linear maps $\Lambda : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{\mathrm{out}})$ such that $\mathrm{id}_k\otimes\Lambda$ preserves positive semidefiniteness for all $k\ge 1$.
+since Kronecker products and sums preserve positive semidefiniteness.
+\end{proof}
+
+Applied to Choi matrices, this yields the same tensor stability for completely positive maps, i.e., linear maps $\Lambda : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{\mathrm{out}})$ such that $\mathrm{id}_k\otimes\Lambda$ preserves positive semidefiniteness for all $k\ge 1$.
 
 \begin{lemma}[Off-diagonal agreement]
 \label{lem:cp-agreement}
-\notready
+\lean{IsKrausCP.map_vecMulVec_right_eq_zero, IsKrausCP.map_vecMulVec_left_eq_zero}
+\leanok
 Let $\mathcal{D} : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{\mathrm{out}})$ be completely positive and $\ket{u}\in\mathcal{H}_{\mathrm{in}}$. If $\mathcal{D}(\ketbra{u}{u}) = 0$, then
 \[
   \mathcal{D}(\ketbra{z}{u}) = 0 \qquad\text{and}\qquad \mathcal{D}(\ketbra{u}{z}) = 0
 \]
 for every $\ket{z}\in\mathcal{H}_{\mathrm{in}}$.
 \end{lemma}
+\begin{proof}
+\leanok
+Writing $\mathcal{D}(X) = \sum_i K_i X K_i^{\dagger}$, the hypothesis $\sum_i \ketbra{K_i u}{K_i u} = 0$ forces $\sum_i \|K_i u\|^2 = 0$, hence $K_i u = 0$ for every $i$. Therefore $\mathcal{D}(\ketbra{z}{u}) = \sum_i \ketbra{K_i z}{K_i u} = 0$ and $\mathcal{D}(\ketbra{u}{z}) = \sum_i \ketbra{K_i u}{K_i z} = 0$.
+\end{proof}
 
 For a linear map $\Lambda : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{\mathrm{out}})$, its (unnormalized, input-first) \emph{Choi matrix} in the computational basis $\{\ket{a}\}$ of $\mathcal{H}_{\mathrm{in}}$ is
 \[
@@ -42,7 +52,8 @@ Then $\Lambda$ is completely positive if and only if $J_\Lambda\succeq 0$, prese
 
 \begin{lemma}[Choi certificate]
 \label{lem:choi-cert}
-\notready
+\lean{operatorSchmidtMap_satisfies_reverseBlock_hypotheses, exists_map_of_choiCertificate, exists_map_of_choiCertificate_compression}
+\leanok
 \uses{lem:cp-agreement}
 Let $\mathcal{C}, \mathcal{S} : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{\mathrm{out}})$ be linear maps with Choi matrices $J = J_{\mathcal{C}}$ and $Q = J_{\mathcal{S}}$, and let $\ket{u}\in\mathcal{H}_{\mathrm{in}}$. The following are equivalent:
 \begin{enumerate}
@@ -50,10 +61,15 @@ Let $\mathcal{C}, \mathcal{S} : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \math
   \item $J+Q\succeq 0$, $J-Q\succeq 0$, $Q^{\Gamma_{\mathrm{in}}}\succeq 0$, and $(J-Q)(\ket{\bar{u}}\otimes I_{\mathrm{out}}) = 0$ (equivalently, $(\bra{\bar{u}}\otimes I_{\mathrm{out}})(J-Q)(\ket{\bar{u}}\otimes I_{\mathrm{out}}) = 0$).
 \end{enumerate}
 \end{lemma}
+\begin{proof}
+\leanok
+Complete positivity of $\mathcal{C}\pm\mathcal{S}$ and complete copositivity of $\mathcal{S}$ correspond via the Choi isomorphism to $J\pm Q\succeq 0$ and $Q^{\Gamma_{\mathrm{in}}}\succeq 0$. Since $(\bra{\bar{u}}\otimes I_{\mathrm{out}})(J-Q)(\ket{\bar{u}}\otimes I_{\mathrm{out}}) = (\mathcal{C}-\mathcal{S})(\ketbra{u}{u})$ and $J-Q\succeq 0$, this compression vanishes if and only if $(J-Q)(\ket{\bar{u}}\otimes I_{\mathrm{out}}) = 0$; Lemma~\ref{lem:cp-agreement} gives the off-diagonal agreement.
+\end{proof}
 
 \begin{theorem}[Reverse-block positivity]
 \label{thm:reverse-criterion}
-\notready
+\lean{piTensorMap_const_reverseBlock_posSemidef, piTensorMap_reverseBlock_posSemidef}
+\leanok
 \uses{lem:tensor-interval,lem:cp-agreement}
 Let $\mathcal{C}, \mathcal{S} : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{\mathrm{out}})$ and $\ket{u}\in\mathcal{H}_{\mathrm{in}}$ be such that $\mathcal{C}+\mathcal{S}$ and $\mathcal{C}-\mathcal{S}$ are completely positive, $\mathcal{S}$ is completely copositive, and $\mathcal{C}(\ketbra{u}{u})=\mathcal{S}(\ketbra{u}{u})$. Then for every $n\ge 1$ and all $\ket{v},\ket{w}\in\mathcal{H}_{\mathrm{in}}^{\otimes n}$ with $\ket{v}+\ket{w}=\ket{u}^{\otimes n}$,
 \[
@@ -66,46 +82,64 @@ Let $\mathcal{C}, \mathcal{S} : \mathcal{L}(\mathcal{H}_{\mathrm{in}}) \to \math
 \]
 The same holds for any finite heterogeneous tensor product $\bigotimes_{k=1}^n \mathcal{C}_k$ and $\ket{u} = \bigotimes_{k=1}^n \ket{u^{(k)}}$ whose factors each satisfy these hypotheses.
 \end{theorem}
+\begin{proof}
+\leanok
+Write $\mathcal{C}_n = \bigotimes_{k=1}^n \mathcal{C}_k$, $\mathcal{S}_n = \bigotimes_{k=1}^n \mathcal{S}_k$, and $\ket{u_n} = \bigotimes_{k=1}^n \ket{u^{(k)}}$. By Lemma~\ref{lem:tensor-interval} on Choi matrices, $\mathcal{C}_n - \mathcal{S}_n$ is completely positive, while $\mathcal{S}_n$ is completely copositive and agrees with $\mathcal{C}_n$ on $\ketbra{u_n}{u_n}$, hence also on $\ketbra{v}{u_n}$ and $\ketbra{u_n}{v}$ by Lemma~\ref{lem:cp-agreement}. Adding $\operatorname{diag}(0, (\mathcal{C}_n-\mathcal{S}_n)(\ketbra{v}{v}))\succeq 0$ to the positive semidefinite reverse-block matrix of $\mathcal{S}_n$ on $(\ket{u_n},\ket{v})$ gives $\bigl(\begin{smallmatrix}\mathcal{C}_n(\ketbra{u_n}{u_n}) & \mathcal{C}_n(\ketbra{v}{u_n}) \\ \mathcal{C}_n(\ketbra{u_n}{v}) & \mathcal{C}_n(\ketbra{v}{v})\end{smallmatrix}\bigr)\succeq 0$. Conjugating by $\bigl(\begin{smallmatrix}I & -I \\ 0 & I\end{smallmatrix}\bigr)$ and substituting $\ket{w}=\ket{u_n}-\ket{v}$ yields $\Omega_{v,w}\succeq 0$.
+\end{proof}
 
 \section{Local factorization and Bell-overlap obstruction}
 
 \begin{lemma}[Spectral splitting]
 \label{lem:spectral-split}
-\notready
-Let $L : \mathcal{L}(\mathcal{H}_{A,\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{A,\mathrm{out}})$ and $M : \mathcal{L}(\mathcal{H}_{B,\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{B,\mathrm{out}})$ be completely positive, $\mathcal{C} = L\otimes M$, and $\ket{u}\in\mathcal{H}_{A,\mathrm{in}}\otimes\mathcal{H}_{B,\mathrm{in}}$. For any positive semidefinite $X_0, X_1 \in \mathcal{L}(\mathcal{H}_{A,\mathrm{out}})$ and $Y_0, Y_1 \in \mathcal{L}(\mathcal{H}_{B,\mathrm{out}})$, set $D_{ij} = X_i\otimes Y_j$ and $p_{ij} = \Tr(D_{ij}\,\mathcal{C}(\ketbra{u}{u}))$. Then there exist $\ket{v},\ket{w}\in\mathcal{H}_{A,\mathrm{in}}\otimes\mathcal{H}_{B,\mathrm{in}}$ with $\ket{v}+\ket{w}=\ket{u}$ such that $R_{xy}=\mathcal{C}(\ketbra{x}{y})$, $a_{ij} = \Tr(D_{ij}\,R_{vv})$, and $b_{ij} = \Tr(D_{ij}\,R_{ww})$ satisfy
+\lean{Matrix.exists_twoForms_bipartite_split}
+\leanok
+Let $E_0, E_1 \in \mathcal{L}(\mathcal{H}_A)$ be positive semidefinite, let $\ket{u}\in\mathcal{H}_A\otimes\mathcal{H}_B$, and let $\{F_j\}_{j\in J}$ be a family of positive semidefinite operators on $\mathcal{H}_B$. Then there exist $\ket{v},\ket{w}\in\mathcal{H}_A\otimes\mathcal{H}_B$ with $\ket{v}+\ket{w}=\ket{u}$ such that for every $j\in J$ and $i\in\{0,1\}$,
 \[
-  \Tr(D_{ij}\,R_{vw}) = \Tr(D_{ij}\,R_{wv}) = 0, \qquad
-  p_{ij} = a_{ij} + b_{ij}, \qquad
-  a_{0j} \ge a_{1j}, \qquad
-  b_{0j} \le b_{1j}.
+  \bra{w}(E_i\otimes F_j)\ket{v} = \bra{v}(E_i\otimes F_j)\ket{w} = 0, \qquad
+  \bra{v}\big((E_0-E_1)\otimes F_j\big)\ket{v} \ge 0, \qquad
+  \bra{w}\big((E_1-E_0)\otimes F_j\big)\ket{w} \ge 0.
 \]
 \end{lemma}
+\begin{proof}
+\leanok
+Let $H = E_0 + E_1 \succeq 0$, let $W$ be the invertible Hermitian operator equal to $H^{-1/2}$ on $\operatorname{supp}(H)$ and $I$ on $\ker(H)$, and let $P_+$ be the spectral projection onto the nonnegative eigenspace of $W(E_0 - E_1)W$. Setting $Q = W P_+ W^{-1}$, the operators $Q\otimes I_B$ and $(I_A - Q)\otimes I_B$ split $\ket{u} = \ket{v} + \ket{w}$ so that $E_0, E_1$ have vanishing cross-terms and $E_0 - E_1$ is positive semidefinite on the $Q$-component and negative semidefinite on the $(I_A - Q)$-component; tensoring with $F_j\succeq 0$ preserves both properties.
+\end{proof}
 
-For $n$ copies of a bipartite space $\mathcal{H}_A\otimes\mathcal{H}_B$, we pass between the copy-major ordering $(\mathcal{H}_A\otimes\mathcal{H}_B)^{\otimes n}$ and the party-major ordering $\mathcal{H}_A^{\otimes n}\otimes\mathcal{H}_B^{\otimes n}$ by the canonical factor permutation grouping Alice's systems before Bob's.
+For a product of completely positive maps $\mathcal{C} = L\otimes M$ and positive semidefinite local effects $X_0, X_1$ and $Y_j$, applying Lemma~\ref{lem:spectral-split} to $E_i = L^{\dagger}(X_i)$ and $F_j = M^{\dagger}(Y_j)$ splits $\ket{u}$ with respect to the adjoint local effects. For $n$ copies of a bipartite space $\mathcal{H}_A\otimes\mathcal{H}_B$, we pass between the copy-major ordering $(\mathcal{H}_A\otimes\mathcal{H}_B)^{\otimes n}$ and the party-major ordering $\mathcal{H}_A^{\otimes n}\otimes\mathcal{H}_B^{\otimes n}$ by the canonical factor permutation grouping Alice's systems before Bob's.
 
 \begin{lemma}[Rank-one coherence bound]
 \label{lem:coherence-general}
-\notready
+\lean{QuantumInfo.rankOne_coherence_pow_four_le, QuantumInfo.rankOne_coherence_pow_four_le_of_smul}
+\leanok
 \uses{thm:reverse-criterion,lem:spectral-split}
 Let $L : \mathcal{L}(\mathcal{H}_{A,\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{A,\mathrm{out}})$ and $M : \mathcal{L}(\mathcal{H}_{B,\mathrm{in}}) \to \mathcal{L}(\mathcal{H}_{B,\mathrm{out}})$ be completely positive, $\mathcal{C} = L\otimes M$, and $\ket{u}\in\mathcal{H}_{A,\mathrm{in}}\otimes\mathcal{H}_{B,\mathrm{in}}$ with $\Tr(\mathcal{C}(\ketbra{u}{u})) > 0$. Set $\rho = \mathcal{C}(\ketbra{u}{u}) / \Tr(\mathcal{C}(\ketbra{u}{u}))$, and suppose there exists $\mathcal{S}$ satisfying the hypotheses of Theorem~\ref{thm:reverse-criterion} for $(\mathcal{C}, \ket{u})$. Then for every $n\ge 1$ and all $\ket{a_0},\ket{a_1}\in\mathcal{H}_{A,\mathrm{out}}^{\otimes n}$, $\ket{b_0},\ket{b_1}\in\mathcal{H}_{B,\mathrm{out}}^{\otimes n}$ (in party-major coordinates), with $\ket{x_{ij}} = \ket{a_i}\otimes\ket{b_j}$, $p_{ij} = \bra{x_{ij}}\rho^{\otimes n}\ket{x_{ij}}$, and $k = |\bra{x_{00}}\rho^{\otimes n}\ket{x_{11}}|$,
 \[
   k^4 \le p_{00}\,p_{01}\,p_{10}\,p_{11}.
 \]
 \end{lemma}
+\begin{proof}
+\leanok
+Applying Lemma~\ref{lem:spectral-split} to the adjoint local effects $(L^{\otimes n})^{\dagger}(\ketbra{a_i}{a_i})$ and $(M^{\otimes n})^{\dagger}(\ketbra{b_j}{b_j})$ splits $\ket{u}^{\otimes n} = \ket{v} + \ket{w}$. Compressing $\Omega_{v,w}\succeq 0$ from Theorem~\ref{thm:reverse-criterion} against $(\ket{x_{00}}, \ket{x_{11}})$ and using positivity of the diagonal blocks bounds $k$ by a four-term square-root sum in the split populations, whose optimization under the splitting inequalities yields $k^4 \le p_{00}p_{01}p_{10}p_{11}$.
+\end{proof}
 
-A two-qubit \emph{Bell state} $\ket{\Phi}\in\mathbb{C}^2\otimes\mathbb{C}^2$ is a unit vector with maximally mixed marginals, with projector $\Phi = \ketbra{\Phi}{\Phi}$; the \emph{Bell fidelity} of a two-qubit state $\tau$ is $\bra{\Phi}\tau\ket{\Phi}$.
+Fix the canonical two-qubit Bell state $\ket{\Omega_2} = (\ket{00}+\ket{11})/\sqrt{2}$ with projector $\Omega_2 = \ketbra{\Omega_2}{\Omega_2}$.
 
 \begin{theorem}[All-copy Bell-overlap bound]
 \label{thm:overlap-criterion}
-\notready
+\lean{QuantumInfo.bellOverlap_separableOperation_le, QuantumInfo.bellOverlap_localUnitary_separableOperation_le, QuantumInfo.bellOverlap_normalized_separableOperation_le}
+\leanok
 \uses{def:sep-op,lem:coherence-general}
-Under the hypotheses of Lemma~\ref{lem:coherence-general}, for every $n\ge 1$, every product-Kraus separable operation $\Lambda$ from $\mathcal{H}_{A,\mathrm{out}}^{\otimes n}\otimes\mathcal{H}_{B,\mathrm{out}}^{\otimes n}$ to $\mathbb{C}^2\otimes\mathbb{C}^2$ (Definition~\ref{def:sep-op}), and every two-qubit Bell projector $\Phi = \ketbra{\Phi}{\Phi}$,
+Under the hypotheses of Lemma~\ref{lem:coherence-general}, for every $n\ge 1$, every product-Kraus separable operation $\Lambda$ from $\mathcal{H}_{A,\mathrm{out}}^{\otimes n}\otimes\mathcal{H}_{B,\mathrm{out}}^{\otimes n}$ to $\mathbb{C}^2\otimes\mathbb{C}^2$ (Definition~\ref{def:sep-op}), and every local-unitary equivalent $\Phi = (U\otimes V)\Omega_2(U\otimes V)^{\dagger}$,
 \[
   \Tr\big(\Phi\,\Lambda(\rho^{\otimes n})\big)
   \le \frac{1+\sqrt{2}}{4}\,\Tr\big(\Lambda(\rho^{\otimes n})\big).
 \]
-Hence, whenever $\Tr(\Lambda(\rho^{\otimes n})) > 0$, the normalized output $\tau = \Lambda(\rho^{\otimes n})/\Tr(\Lambda(\rho^{\otimes n}))$ satisfies $\bra{\Phi}\tau\ket{\Phi} \le (1+\sqrt{2})/4$.
+Hence, whenever $\Tr(\Lambda(\rho^{\otimes n})) > 0$, the normalized output $\tau = \Lambda(\rho^{\otimes n})/\Tr(\Lambda(\rho^{\otimes n}))$ satisfies $\Tr(\Omega_2\tau) \le (1+\sqrt{2})/4$.
 \end{theorem}
+\begin{proof}
+\leanok
+Absorbing $U^{\dagger}\otimes V^{\dagger}$ into the local Kraus operators reduces to $\Phi = \Omega_2$. For each product Kraus term $A_\alpha\otimes B_\alpha$, applying Lemma~\ref{lem:coherence-general} to the rows of $A_\alpha$ and $B_\alpha$ gives $2|\bra{00}\tau_\alpha\ket{11}| \le 2(p_{00}p_{01}p_{10}p_{11})^{1/4}$, whence $\Tr(\Omega_2\tau_\alpha) \le \frac{1+\sqrt{2}}{4}\Tr(\tau_\alpha)$ by AM--GM; summing over $\alpha$ concludes the proof.
+\end{proof}
 
 \section{Separable operations and zero distillation}
 
@@ -122,7 +156,7 @@ It is \emph{trace-nonincreasing} if $\sum_{\alpha\in I} (A_\alpha^{\dagger}A_\al
 
 \begin{lemma}[Separable-operation calculus]
 \label{lem:sep-op-comp}
-\lean{QuantumInfo.SeparableOperation.isKrausCP_map, QuantumInfo.SeparableOperation.map_id, QuantumInfo.SeparableOperation.comp, QuantumInfo.SeparableOperation.map_comp, QuantumInfo.SeparableOperation.map_comp_eq, QuantumInfo.SeparableOperation.trace_map, QuantumInfo.SeparableOperation.trace_map_le}
+\lean{QuantumInfo.SeparableOperation.isKrausCP_map, QuantumInfo.SeparableOperation.map_id, QuantumInfo.SeparableOperation.comp, QuantumInfo.SeparableOperation.map_comp, QuantumInfo.SeparableOperation.map_comp_eq, KrausFamily.trace_map, KrausFamily.trace_map_le}
 \leanok
 \uses{def:sep-op}
 For every product-Kraus separable operation $S$, $\Lambda_S$ is completely positive. The singleton pair $(I_A, I_B)$ induces the identity map, and composable operations $S, T$ compose to $T\circ S$ indexed by $I_T\times I_S$ with local operators $(A'_\beta A_\alpha, B'_\beta B_\alpha)$ and $\Lambda_{T\circ S} = \Lambda_T\circ\Lambda_S$. Moreover, trace-preserving operations satisfy $\Tr(\Lambda_S(X))=\Tr(X)$ for all $X$, and trace-nonincreasing operations satisfy $\Tr(\Lambda_S(\sigma))\le\Tr(\sigma)$ for all $\sigma\succeq 0$.
@@ -132,35 +166,43 @@ For every product-Kraus separable operation $S$, $\Lambda_S$ is completely posit
 Viewing $(A_\alpha\otimes B_\alpha)_{\alpha\in I}$ as a Kraus family gives complete positivity and both trace relations directly. Composition follows from $(A'_\beta\otimes B'_\beta)(A_\alpha\otimes B_\alpha) = (A'_\beta A_\alpha)\otimes(B'_\beta B_\alpha)$ and reindexing over $I_T\times I_S$.
 \end{proof}
 
-A \emph{state} (density matrix) is a positive semidefinite operator $\sigma\succeq 0$ with $\Tr(\sigma)=1$. Measure error by the full trace norm $\|X\|_1 = \Tr\sqrt{X^{\dagger}X}$. Given a bipartite state $\sigma$, a two-qubit Bell projector $\Phi$, and a class $\mathcal{P}$ of trace-preserving bipartite protocols mapping $n$ copies to $m$ qubit pairs, define in $[0,+\infty]$ for $r\ge 0$ and $n\ge 1$:
+A \emph{state} (density matrix) is a positive semidefinite operator $\sigma\succeq 0$ with $\Tr(\sigma)=1$. Measure error by the full trace norm $\|X\|_1 = \Tr\sqrt{X^{\dagger}X}$, with target $\Omega_2$. Given a bipartite state $\sigma$ and a class $\mathcal{P}$ of trace-preserving bipartite protocols mapping $n$ party-major copies to $m$ qubit pairs, a rate $r\ge 0$ is \emph{achievable} if there exist protocols $\Lambda_n\in\mathcal{P}(n,\lfloor rn\rfloor)$ for all sufficiently large $n$ with $\|\Lambda_n(\sigma^{\otimes n}) - \Omega_2^{\otimes\lfloor rn\rfloor}\|_1 \to 0$. Equivalently, defining in $[0,+\infty]$ for $r\ge 0$ and $n\ge 1$
 \[
   \varepsilon_n^{\mathcal{P}}(r) = \inf_{\Lambda\in\mathcal{P}(n,\lfloor rn\rfloor)}
-  \big\|\Lambda(\sigma^{\otimes n}) - \Phi^{\otimes\lfloor rn\rfloor}\big\|_1,
+  \big\|\Lambda(\sigma^{\otimes n}) - \Omega_2^{\otimes\lfloor rn\rfloor}\big\|_1,
   \qquad
   E_D^{\mathcal{P}}(\sigma) = \sup\big\{r\ge 0 : \lim_{n\to\infty}\varepsilon_n^{\mathcal{P}}(r)=0\big\},
 \]
-with $\inf\emptyset = +\infty$ and $\sup\emptyset = 0$. An entangled state $\sigma$ is \emph{bound entangled} under $\mathcal{P}$ if its distillable entanglement satisfies $E_D^{\mathcal{P}}(\sigma)=0$.
+with $\inf\emptyset = +\infty$ and $\sup\emptyset = 0$, $r$ is achievable if and only if $\lim_{n\to\infty}\varepsilon_n^{\mathcal{P}}(r)=0$. An entangled state $\sigma$ is \emph{bound entangled} under $\mathcal{P}$ if $E_D^{\mathcal{P}}(\sigma)=0$.
 
 \begin{lemma}[Zero-distillation criterion]
 \label{lem:zero}
-\notready
+\lean{QuantumCircuit.distillableEntanglement_eq_zero_of_uniformBellOverlapCap, QuantumCircuit.isAchievableDistillationRate_iff_tendsto_minDistillationError}
+\leanok
 \uses{def:sep-op,lem:sep-op-comp}
-Let $\sigma$ be a bipartite state and $\mathcal{P}$ a class of trace-preserving bipartite protocols whose maps are all induced by trace-preserving product-Kraus separable operations. If there exists $c<1$ such that
+Let $\sigma$ be a bipartite state and $\mathcal{P}$ a class of trace-preserving bipartite protocols whose maps are all induced by product-Kraus separable operations. If there exists $c<1$ such that
 \[
-  \Tr\big(\Phi\,\Lambda(\sigma^{\otimes n})\big)
+  \Tr\big(\Omega_2\,\Lambda(\sigma^{\otimes n})\big)
   \le c\,\Tr\big(\Lambda(\sigma^{\otimes n})\big)
 \]
 for every $n\ge 1$ and every product-Kraus separable operation $\Lambda$ mapping $n$ copies to $\mathbb{C}^2\otimes\mathbb{C}^2$, then $E_D^{\mathcal{P}}(\sigma)=0$.
 \end{lemma}
-
-Indeed, if $\varepsilon_n^{\mathcal{P}}(r)\to 0$ for some $r>0$, then for $\lfloor rn\rfloor\ge 1$ composing $\Lambda\in\mathcal{P}(n,\lfloor rn\rfloor)$ with the partial trace over all output pairs except one (a trace-preserving product-Kraus separable operation that contracts $\|\cdot\|_1$) yields a two-qubit state with Bell fidelity approaching $1$, contradicting $c<1$.
+\begin{proof}
+\leanok
+If $r>0$ were achievable (equivalently $\varepsilon_n^{\mathcal{P}}(r)\to 0$), then for sufficiently large $n$ we have $\lfloor rn\rfloor\ge 1$ and some $\Lambda_n\in\mathcal{P}(n,\lfloor rn\rfloor)$ with $\|\Lambda_n(\sigma^{\otimes n}) - \Omega_2^{\otimes\lfloor rn\rfloor}\|_1 < 1-c$. Composing $\Lambda_n$ with local discard of all output pairs except the first---a trace-preserving product-Kraus separable operation that contracts $\|\cdot\|_1$ and sends $\Omega_2^{\otimes\lfloor rn\rfloor}$ to $\Omega_2$---produces a unit-trace two-qubit state $\tau_n$ with $\|\tau_n - \Omega_2\|_1 < 1-c$, hence $\Tr(\Omega_2\tau_n) > c$, contradicting the uniform cap.
+\end{proof}
 
 \begin{lemma}[Finite-round LOCC is separable]
 \label{lem:locc}
-\notready
+\lean{QuantumCircuit.IsFiniteRoundLOCC.exists_separableOperation}
+\leanok
 \uses{def:sep-op,lem:sep-op-comp}
 Every finite-round, finite-outcome adaptive bipartite protocol built from outcome-dependent local quantum instruments with classical feed-forward has product Kraus operators on each outcome branch, and its averaged trace-preserving map is a product-Kraus separable operation.
 \end{lemma}
+\begin{proof}
+\leanok
+Induct on the finite adaptive round tree. At each round, the parallel local trace-preserving Kraus instruments have joint Kraus operators factoring across the two parties, and composing with the inductively constructed trace-preserving separable operations on each outcome branch preserves both the product-Kraus form and trace preservation.
+\end{proof}
 
 \section{The two-qudit Werner state}
 
@@ -202,18 +244,24 @@ and set $\mathcal{C} = L\otimes M$, $\mathcal{C}_n = \mathcal{C}^{\otimes n}$, a
 
 \begin{lemma}[Local-map representation]
 \label{lem:maps}
-\notready
+\lean{NPTEnt.LocalMaps.L_isKrausCP, NPTEnt.LocalMaps.M_isKrausCP, NPTEnt.LocalMaps.piKronecker_rho_eq_smul_CCopies}
+\leanok
 The maps $L$ and $M$ are completely positive, and for every $n\ge 1$,
 \[
   \rho^{\otimes n} = \frac{\mathcal{C}_n(\ketbra{u_n}{u_n})}{(37\cdot 1448)^n}.
 \]
 \end{lemma}
+\begin{proof}
+\leanok
+Their Choi matrices $J_L = 5I - 3F \succeq 0$ and $J_M = 18I + 37\ketbra{u}{u} \succeq 0$ establish complete positivity. Direct evaluation gives $\mathcal{C}(\ketbra{u}{u}) = 37(23I - 3F) = 37\cdot 1448\,\rho$, and taking $n$-fold tensor products yields the $n$-copy identity.
+\end{proof}
 
 Let $J = J_{\mathcal{C}}$ be the Choi matrix of $\mathcal{C}$ on $(\mathbb{C}^8)^{\otimes 4}$ (ordered as Alice input, Bob input, Alice output, Bob output).
 
 \begin{lemma}[Single-copy certificate]
 \label{lem:certificate}
-\notready
+\lean{NPTEnt.Certificate.appendixA_certificate, NPTEnt.Main.auxiliaryMapS_spec}
+\leanok
 \uses{lem:maps}
 There exists a linear map $\mathcal{S}$ on $64\times 64$ matrices whose Choi matrix $Q = J_{\mathcal{S}}$ is Hermitian and satisfies
 \[
@@ -223,8 +271,10 @@ There exists a linear map $\mathcal{S}$ on $64\times 64$ matrices whose Choi mat
 \]
 where $I$ is the identity on the two output systems.
 \end{lemma}
-
-In Appendix~A of~\cite{Faisal2026}, $Q$ is given explicitly as a rational linear combination (denominator $40$) of partial transposes on the second factor of the $24$ permutation operators on $(\mathbb{C}^8)^{\otimes 4}$, commuting with $\bar{U}\otimes U\otimes\bar{U}\otimes\bar{U}$ for all $U\in U(8)$.
+\begin{proof}
+\leanok
+In Appendix~A of~\cite{Faisal2026}, $Q$ is given explicitly as a rational linear combination (denominator $40$) of partial transposes on the second factor of the $24$ permutation operators on $(\mathbb{C}^8)^{\otimes 4}$, commuting with $\bar{U}\otimes U\otimes\bar{U}\otimes\bar{U}$ for all $U\in U(8)$. Decomposing into canonical $U(8)$-invariant weight blocks reduces $J\pm Q\succeq 0$ and $Q^{\Gamma_{\mathrm{in}}}\succeq 0$ to exact rational $LDL^{\dagger}$ certificates on all canonical blocks, while $(J-Q)(\ket{u}\otimes I)=0$ holds directly; the inverse Choi map yields $\mathcal{S}$.
+\end{proof}
 
 Specializing Theorem~\ref{thm:reverse-criterion}, Lemma~\ref{lem:coherence-general}, and Theorem~\ref{thm:overlap-criterion} via Lemmas~\ref{lem:maps} and~\ref{lem:certificate} yields the following consequences for $\rho$.
 
@@ -253,19 +303,38 @@ For every $n\ge 1$ and all $\ket{a_0},\ket{a_1},\ket{b_0},\ket{b_1}\in(\mathbb{C
 \]
 \end{lemma}
 
-\begin{theorem}[Uniform Bell-overlap cap]
+\begin{theorem}[Uniform canonical Bell-overlap cap]
 \label{thm:cap}
-\notready
+\lean{NPTEnt.Main.bellOverlap_separableOperation_le, NPTEnt.Main.bellOverlap_normalized_separableOperation_le, NPTEnt.Main.hasUniformBellOverlapCap_rho}
+\leanok
 \uses{def:sep-op,lem:maps,lem:certificate,lem:choi-cert,thm:overlap-criterion}
-For every $n\ge 1$, every product-Kraus separable operation $\Lambda$ from $(\mathbb{C}^8)^{\otimes n}\otimes(\mathbb{C}^8)^{\otimes n}$ to $\mathbb{C}^2\otimes\mathbb{C}^2$ with $\Tr(\Lambda(\rho^{\otimes n}))>0$, and every two-qubit Bell state $\ket{\Phi}$, the normalized output $\tau = \Lambda(\rho^{\otimes n})/\Tr(\Lambda(\rho^{\otimes n}))$ satisfies
+For every $n\ge 1$ and every product-Kraus separable operation $\Lambda$ from $(\mathbb{C}^8)^{\otimes n}\otimes(\mathbb{C}^8)^{\otimes n}$ to $\mathbb{C}^2\otimes\mathbb{C}^2$ with $\Tr(\Lambda(\rho^{\otimes n}))>0$, the normalized output $\tau = \Lambda(\rho^{\otimes n})/\Tr(\Lambda(\rho^{\otimes n}))$ satisfies
 \[
-  \bra{\Phi}\tau\ket{\Phi} \le \frac{1+\sqrt{2}}{4}.
+  \Tr(\Omega_2\,\tau) \le \frac{1+\sqrt{2}}{4}.
 \]
 \end{theorem}
+\begin{proof}
+\leanok
+Combine Lemmas~\ref{lem:maps}, \ref{lem:certificate}, and~\ref{lem:choi-cert} with Theorem~\ref{thm:overlap-criterion}.
+\end{proof}
+
+\begin{theorem}[Zero finite-round LOCC distillation rate of $\rho$]
+\label{thm:zero-rate}
+\lean{NPTEnt.Main.npt_zero_finiteRoundLOCC_distillableEntanglement}
+\leanok
+\uses{lem:state,lem:nonseparable,thm:cap,lem:locc,lem:zero}
+The Werner state $\rho=(23I-3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$ is NPT, entangled, and has $E_D(\rho)=0$ under the finite-round, finite-outcome LOCC class of Lemma~\ref{lem:locc}.
+\end{theorem}
+\begin{proof}
+\leanok
+Since $(1+\sqrt{2})/4 < 1$, combining Lemmas~\ref{lem:state}, \ref{lem:nonseparable}, \ref{lem:locc}, and~\ref{lem:zero} with Theorem~\ref{thm:cap} gives $E_D(\rho)=0$.
+\end{proof}
+
+The checked zero rate in Theorem~\ref{thm:zero-rate} does not yet establish the finite-copy Dür--Cirac--Lewenstein--Bru{\ss} undistillability criterion (positivity of $(\rho^{\otimes N})^{\Gamma}$ on all Schmidt-rank-$\le 2$ vectors for every $N\ge 1$), which remains open pending a finite purification bridge.
 
 \begin{theorem}[Undistillability of $\rho$]
 \label{thm:bound}
 \notready
-\uses{lem:state,lem:nonseparable,thm:cap,lem:locc,lem:zero}
-The Werner state $\rho=(23I-3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$ is NPT, entangled, and has $E_D(\rho)=0$ under the finite-round LOCC class of Lemma~\ref{lem:locc}.
+\uses{thm:zero-rate}
+The Werner state $\rho=(23I-3F)/1448$ on $\mathbb{C}^8\otimes\mathbb{C}^8$ is NPT bound entangled and satisfies the all-copy Schmidt-rank-$\le 2$ partial-transpose positivity criterion for every $N\ge 1$.
 \end{theorem}

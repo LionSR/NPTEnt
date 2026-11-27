@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_sha256": "56efbdf9de4cb86b331243630b83c9e5adbf1a107b39ceafea4f5dbbf6da7d35",
+  "scale_factor": 40,
+  "local_dim": 8,
+  "rational_encoding": "[numerator, denominator] with denominator > 0",
+  "epistemic_note": "Exact rational LDL witness data generated from Appendix A; computational evidence for downstream kernel-checked Lean replay, not itself a Lean proof.",
+  "files": {
+    "canonical_orbits_J_plus_Q.json": "b2037ddb47bce5ad7994f77a7d34f6e525e77e09020d88e46e12c4ebab0b5f69",
+    "reduced_blocks_J_plus_Q.json": "75e1fc7ae00f205cb5b8478f83a79541ffdba603bfce5e18d001cd5d050c8970",
+    "canonical_orbits_J_minus_Q.json": "2a417b6bf76d9256ac549f17e0b762b6b752f3b50052aaa79664f13d47ab4a92",
+    "reduced_blocks_J_minus_Q.json": "851369ec15fac8aa58d7433ff7369c670bd009df3c383abd985855481f8ab152",
+    "canonical_orbits_Q_gamma_in.json": "2ef5a5ef033591534ae7bf93cf4fff4edecca26f56b222500ee67c37e24503ca",
+    "reduced_blocks_Q_gamma_in.json": "02ce8bdfd3f8e117fbd9b0bacabc4449ff5f7b9b2ff0c32224ea47fc033509ea"
+  },
+  "summary": {
+    "40(J+Q)": {
+      "canonical_orbit_count": 5,
+      "reduced_block_count": 9,
+      "max_reduced_size": 6,
+      "singular_reduced_blocks": []
+    },
+    "40(J-Q)": {
+      "canonical_orbit_count": 5,
+      "reduced_block_count": 9,
+      "max_reduced_size": 6,
+      "singular_reduced_blocks": [
+        "(-2):trivial_4x4",
+        "(-1,-1):trivial_sym_6x6",
+        "(-1,-1):trivial_antisym_6x6"
+      ]
+    },
+    "40Q^Gamma_in": {
+      "canonical_orbit_count": 5,
+      "reduced_block_count": 9,
+      "max_reduced_size": 6,
+      "singular_reduced_blocks": []
+    }
+  }
+}

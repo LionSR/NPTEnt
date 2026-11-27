@@ -115,23 +115,34 @@
           </thead>
           <tbody>
             <tr>
-              <td>Explicit Werner state <i>&rho;</i> (positive semidefinite, unit trace, NPT, nonseparable)</td>
+              <td>General foundations (order intervals, Choi certificate, reverse-block, spectral splitting, coherence &amp; Bell-overlap bounds, finite-round LOCC, zero-distillation criterion)</td>
+              <td class="state done">Lean 4 verified (QICLean)</td>
+            </tr>
+            <tr>
+              <td>Explicit Werner state <i>&rho;</i> &amp; local-map representation</td>
               <td class="state done">Lean 4 verified</td>
             </tr>
             <tr>
               <td>Finite single-copy certificate</td>
-              <td class="state open">Exact Python check only</td>
+              <td class="state done">Lean 4 verified</td>
             </tr>
             <tr>
-              <td>All-copy Bell-overlap bound &amp; bound-entanglement conclusion</td>
+              <td>Uniform canonical Bell-overlap cap &amp; zero finite-round LOCC distillation rate</td>
+              <td class="state done">Lean 4 verified</td>
+            </tr>
+            <tr>
+              <td>Full undistillability / bound-entanglement conclusion (incl. D&uuml;r&ndash;Cirac&ndash;Lewenstein&ndash;Bru&szlig; all-<i>N</i> Schmidt-rank-&le;2 criterion)</td>
               <td class="state open">Not yet proved</td>
             </tr>
           </tbody>
         </table>
       </div>
       <p>
-        The main bound-entanglement claim is not yet formalized here; declaration counts are not
-        a measure of completion. Consult the <a href="blueprint/">blueprint</a> and
+        The single-copy certificate, canonical all-copy Bell-overlap cap, and zero finite-round,
+        finite-outcome LOCC distillation rate for <i>&rho;</i> are Lean&nbsp;4 verified, while the
+        full undistillability conclusion (including the all-copy Schmidt-rank-&le;2 partial-transpose
+        criterion) remains unproved here; declaration counts are not a measure of completion.
+        Consult the <a href="blueprint/">blueprint</a> and
         <a href="paper-gaps/">paper-gap notes</a> for current mathematical coverage and open steps.
       </p>
 
