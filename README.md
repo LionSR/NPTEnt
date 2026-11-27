@@ -59,44 +59,6 @@ theorem npt_zero_finiteRoundLOCC_distillableEntanglement :
 
 Both theorems follow from the uniform Bell-overlap bound $(1 + \sqrt{2})/4 < 1$ by separate arguments. Finite-copy undistillability is proved via two-qubit filtering ([`TwoQubitDistillability.lean`](NPTEnt/TwoQubitDistillability.lean)), a 12-element finite isotropic twirl and parity filter ([`QubitRecurrence.lean`](NPTEnt/QubitRecurrence.lean)), and recurrence amplification of $g(f) = (10f^2 - 2f + 1)/(8f^2 - 4f + 5)$ ([`RecurrenceAmplification.lean`](NPTEnt/RecurrenceAmplification.lean)); it is not deduced from rate zero (see [finite-copy undistillability](docs/finite-copy-undistillability.md)). The rate theorem covers finite-round LOCC with finitely many outcomes. Infinite-round LOCC, its closure, and downstream activation, nonadditivity, and nonconvexity consequences are not claimed here.
 
-## Proof overview
-
-General entanglement theory lives in [QICLean](https://github.com/LionSR/QICLean); the explicit $d = 8$ Werner state, certificate verification, and two-qubit purification bridge live in `NPTEnt`.
-
-```mermaid
-flowchart TD
-    subgraph QICLean["QICLean (general theory)"]
-        Q1["Tensor stability and reverse-block positivity"]
-        Q2["Spectral splitting and coherence bound"]
-        Q3["All-copy Bell-overlap bound"]
-        Q4["Finite-round LOCC and zero-rate criterion"]
-        Q5["Symmetry block reduction and exact rational PSD checks"]
-        Q6["Finite-copy Schmidt-rank-2 filter criterion"]
-        Q1 --> Q2 --> Q3
-    end
-
-    subgraph NPTEnt["NPTEnt (d = 8 Werner state)"]
-        N1["Werner state rho and local maps L, M"]
-        N2["4096 x 4096 certificate via S_8 symmetry and 15 rational blocks"]
-        N3["Uniform Bell-overlap cap (1 + sqrt(2)) / 4"]
-        N4["Two-qubit filter, 12-element twirl, and recurrence"]
-        E1["Zero finite-round LOCC distillation rate"]
-        E2["Undistillability for all finite copies N"]
-    end
-
-    Q5 --> N2
-    N1 --> N3
-    N2 --> N3
-    Q3 --> N3
-    N3 --> E1
-    Q4 --> E1
-    N3 --> E2
-    N4 --> E2
-    Q6 --> N4
-```
-
-For the $4096 \times 4096$ certificate ([`Operators.lean`](NPTEnt/Certificate/Operators.lean)), [`Symmetry.lean`](NPTEnt/Certificate/Symmetry.lean) proves symbolically that $40(J \pm Q)$ and $40Q^{\Gamma_{\mathrm{in}}}$ are invariant under simultaneous $S_8$ basis permutations and split into $708$ independent blocks covering all $4096$ basis states (of sizes $1, 3, 6, 22, 42$). Permutation symmetry reduces each matrix to $5$ representative blocks ($15$ in total). [`Blocks.lean`](NPTEnt/Certificate/Blocks.lean) and [`Verification.lean`](NPTEnt/Certificate/Verification.lean) verify positivity of each block in Lean via exact rational $LDL^T$ factorizations, and verify $(J - Q)(|u\rangle \otimes I) = 0$ directly.
-
 ## Additional candidates
 
 Beyond the baseline state $\rho$, [`scripts/check_additional_certificates.py`](scripts/check_additional_certificates.py) checks exact rational single-copy certificates for three further NPT states: $\rho(8, -75/569)$, $\rho(9, -125/1004)$, and a non-Werner perturbation at $d = 8$. Related depolarization, filtering, higher-dimensional, and interpolation families are discussed in [additional candidates](docs/additional-candidates.md) and [example families](docs/example-families.md). These are exact computational checks and mathematical notes, not Lean proofs.
